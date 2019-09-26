@@ -26,20 +26,20 @@
 			<div id="resetButtonId" style="position:absolute;right:40%;top:54%;bottom:46%">Reset</div>
 		</form>
 
-		<div id="S1" style="position:absolute;right:40%;top:10%;bottom:90%">
-				<input type = "button" onclick = "changeStage1()"
+		<div  style="position:absolute;right:40%;top:10%;bottom:90%">
+				<input type = "button" id="S1" onclick = "changeStage1()"
 				value = "Stage 1" /> 
 		</div>
-		<div id="S2" style="position:absolute;right:40%;top:15%;bottom:85%">
-				<input type = "button" onclick = "changeStage2()"
+		<div style="position:absolute;right:40%;top:15%;bottom:85%">
+				<input type = "button" id="S2" onclick = "changeStage2()"
 				value = "Stage 2" /> 
 		</div>
-		<div id="S3" style="position:absolute;right:40%;top:20%;bottom:80%">
-				<input type = "button" onclick = "changeStage3()"
+		<div style="position:absolute;right:40%;top:20%;bottom:80%">
+				<input type = "button" id="S3" onclick = "changeStage3()"
 				value = "Stage 3" /> 
 		</div>
-		<div id="S4" style="position:absolute;right:40%;top:25%;bottom:75%">
-				<input type = "button" onclick = "changeStage4()"
+		<div style="position:absolute;right:40%;top:25%;bottom:75%">
+				<input type = "button" id="S4" onclick = "changeStage4()"
 				value = "Stage 4" /> 
 		</div>
 		<div id="S5" style="position:absolute;right:40%;top:30%;bottom:70%">
@@ -210,6 +210,7 @@
 			}
 
 			function changeStage1(){
+				ocument.getElementById("S1").click();d
 
 				var delta = clock.getDelta();
 				delta = 0.415;
@@ -219,6 +220,7 @@
 				mixer.StopAllActions();
 			}
 			function changeStage2(){
+				ocument.getElementById("S2").click();
 				
 				var delta = clock.getDelta();
 				delta = 0.9462;

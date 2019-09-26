@@ -1,1 +1,286 @@
-Hello World
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Golf Assistant</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link type="text/css" rel="stylesheet" href="main.css">
+	</head>
+
+	<body>
+		<div id="info", style="text-align:right">
+			Golf Assitant Three.js <br>
+			Integration PoC
+		</div>
+
+		<form action="/my-handling-form-page" method="post">
+			<div style="position:absolute;right:50%;top:50%;bottom:50%">
+			  <label for="animtimer">Animation Speed:</label>
+			  <input type="text" id="animtime" name="animtimer">
+			</div>
+			<div style="position:absolute;right:50%;top:54%;bottom:46%">
+				<label for="submit">Update Parameters:</label>
+				<input type="submit" id="submit" name="submit">
+			  </div>
+			<div id="startButtonId" style="position:absolute;right:40%;top:50%;bottom:50%">Start/Stop</div>
+			<div id="resetButtonId" style="position:absolute;right:40%;top:54%;bottom:46%">Reset</div>
+		</form>
+
+		<div id="S1" style="position:absolute;right:40%;top:10%;bottom:90%">
+				<input type = "button" onclick = "changeStage1()"
+				value = "Stage 1" /> 
+		</div>
+		<div id="S2" style="position:absolute;right:40%;top:15%;bottom:85%">
+				<input type = "button" onclick = "changeStage2()"
+				value = "Stage 2" /> 
+		</div>
+		<div id="S3" style="position:absolute;right:40%;top:20%;bottom:80%">
+				<input type = "button" onclick = "changeStage3()"
+				value = "Stage 3" /> 
+		</div>
+		<div id="S4" style="position:absolute;right:40%;top:25%;bottom:75%">
+				<input type = "button" onclick = "changeStage4()"
+				value = "Stage 4" /> 
+		</div>
+		<div id="S5" style="position:absolute;right:40%;top:30%;bottom:70%">
+				<input type = "button" onclick = "changeStage5()"
+				value = "Stage 5" /> 
+		</div>
+		<div id="S6" style="position:absolute;right:40%;top:35%;bottom:65%">
+				<input type = "button" onclick = "changeStage6()"
+				value = "Stage 6" /> 
+		</div>
+		<div id="S7" style="position:absolute;right:40%;top:40%;bottom:60%">
+				<input type = "button" onclick = "changeStage7()"
+				value = "Stage 7" /> 
+		</div>
+		
+
+
+		<script type="module">
+
+			 // Buttons startButton and resetButton
+			var animSpeedFrame = document.getElementById( 'animtime' );
+			var updateButton = document.getElementById( 'submit' );
+			
+
+			import * as THREE from '/build/three.module.js';
+
+			import Stats from '/jsm/libs/stats.module.js';
+			import { OrbitControls } from '/jsm/controls/OrbitControls.js';
+
+			import { FBXLoader } from '/jsm/loaders/FBXLoader.js';
+
+			var container, stats, controls;
+			var camera, scene, renderer, light;
+
+			var clock = new THREE.Clock();
+			var tester = 0;
+
+			var animpause = false;
+			// Determines pause or play.
+			var animtimer = 0.5;
+			// This is the time scaling factor.
+			var animframe;
+			// This is in seconds.
+
+			var mixer;
+
+			
+
+
+			var CanvasHeight =window.innerHeight/2;
+			var CanvasWidth =window.innerWidth/2;
+
+			init();
+			animate();
+		
+
+			function init() {
+
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				camera = new THREE.PerspectiveCamera( 65, CanvasWidth / CanvasHeight, 1, 20000 );
+				camera.position.set( 200, 300, 400 );
+
+				scene = new THREE.Scene();
+				scene.background = new THREE.Color( 0xa0a0a0 );
+				scene.fog = new THREE.Fog( 0xa0a0a0, 200, 1000 );
+
+				light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
+				light.position.set( 0, 200, 0 );
+				scene.add( light );
+
+				light = new THREE.DirectionalLight( 0xffffff );
+				light.position.set( 0, 200, 100 );
+				light.castShadow = true;
+				light.shadow.camera.top = 180;
+				light.shadow.camera.bottom = - 100;
+				light.shadow.camera.left = - 120;
+				light.shadow.camera.right = 120;
+				scene.add( light );
+
+				// scene.add( new CameraHelper( light.shadow.camera ) );
+
+				// ground
+				var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2000, 2000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
+				mesh.rotation.x = - Math.PI / 2;
+				mesh.receiveShadow = true;
+				scene.add( mesh );
+
+				var grid = new THREE.GridHelper( 2000, 20, 0x000000, 0x000000 );
+				grid.material.opacity = 0.1;
+				grid.material.transparent = true;
+				scene.add( grid );
+
+				// model
+				var loader = new FBXLoader();
+				loader.load( 'models/golfer.fbx', function ( object ) {
+					
+					//golf = object.children[0];
+					//golf.scale.set(0.8,0.8,0,8);
+					
+					mixer = new THREE.AnimationMixer( object );
+					mixer.timeScale = animtimer;
+					
+
+					var action = mixer.clipAction( object.animations[ 4 ] );
+					action.play();
+					// Have to add animation selecter here.
+
+					mixer.time = animframe;
+					mixer.paused = animpause;
+
+					object.traverse( function ( child ) {
+
+						if ( child.isMesh ) {
+
+							//child.scale.set(0.25, 0.25, 0.25,0);
+							child.castShadow = true;
+							child.receiveShadow = true;
+
+						}
+
+					} );
+					object.scale.set(0.1, 0.1, 0.1);
+					scene.add( object );
+
+				} );
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( CanvasWidth, CanvasHeight );
+				renderer.shadowMap.enabled = true;
+				container.appendChild( renderer.domElement );
+
+				controls = new OrbitControls( camera, renderer.domElement );
+				controls.target.set( 0, 100, 0 );
+				controls.update();
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+				// stats
+				stats = new Stats();
+				container.appendChild( stats.dom );
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = CanvasWidth / CanvasHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( CanvasWidth, CanvasHeight );
+
+			}
+
+			//
+
+			function animate() {
+				//if (!isPlay) return;
+				requestAnimationFrame( animate );
+
+				var delta = clock.getDelta();
+				
+
+				if ( mixer ) mixer.update( delta );
+				renderer.render( scene, camera );
+				stats.update();
+			}
+
+			function changeStage1(){
+
+				var delta = clock.getDelta();
+				delta = 0.415;
+				mixer.update( delta );
+				renderer.render( scene, camera );
+				stats.update();
+				mixer.StopAllActions();
+			}
+			function changeStage2(){
+				
+				var delta = clock.getDelta();
+				delta = 0.9462;
+				mixer.update( delta );
+				renderer.render( scene, camera );
+				stats.update();
+				requestAnimationFrame( animate );
+				clock.stop();
+				tester = 1;
+			}
+			function changeStage3(){
+				var delta = clock.getDelta();
+				delta = 1.2782;
+				mixer.update( delta );
+				renderer.render( scene, camera );
+				stats.update();
+				requestAnimationFrame( animate );
+				clock.stop();
+				tester = 1;
+			}
+			function changeStage4(){
+				var delta = clock.getDelta();
+				delta = 1.4608;
+				mixer.update( delta );
+				renderer.render( scene, camera );
+				stats.update();
+				requestAnimationFrame( animate );
+				clock.stop();
+				tester = 1;
+			}
+			function changeStage5(){
+				var delta = clock.getDelta();
+				delta = 1.494;
+				mixer.update( delta );
+				renderer.render( scene, camera );
+				stats.update();
+				requestAnimationFrame( animate );
+				clock.stop();
+				tester = 1;
+			}
+			function changeStage6(){
+				var delta = clock.getDelta();
+				delta = 1.7098;
+				mixer.update( delta );
+				renderer.render( scene, camera );
+				stats.update();
+				requestAnimationFrame( animate );
+				clock.stop();
+				tester = 1;
+			}
+			function changeStage7(){
+				var delta = clock.getDelta();
+				delta = 1.9256;
+				mixer.update( delta );
+				renderer.render( scene, camera );
+				stats.update();
+				requestAnimationFrame( animate );
+				clock.stop();
+				tester = 1;
+			}
+
+		</script>
+
+	</body>
+</html>

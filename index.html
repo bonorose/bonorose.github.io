@@ -20,48 +20,60 @@
 			</div>
 			<div style="position:absolute;right:50%;top:54%;bottom:46%">
 				<label for="submit">Update Parameters:</label>
-				<input type="submit" id="submit" name="submit">
+				<input type="button" id="submit">
 			  </div>
 			<div id="startButtonId" style="position:absolute;right:40%;top:50%;bottom:50%">Start/Stop</div>
 			<div id="resetButtonId" style="position:absolute;right:40%;top:54%;bottom:46%">Reset</div>
 		</form>
 
 		<div  style="position:absolute;right:40%;top:10%;bottom:90%">
-				<input type = "button" id="S1" onclick = "changeStage1()"
+				<input type = "button" id="S1" 
 				value = "Stage 1" /> 
 		</div>
 		<div style="position:absolute;right:40%;top:15%;bottom:85%">
-				<input type = "button" id="S2" onclick = "changeStage2()"
+				<input type = "button" id="S2" 
 				value = "Stage 2" /> 
 		</div>
 		<div style="position:absolute;right:40%;top:20%;bottom:80%">
-				<input type = "button" id="S3" onclick = "changeStage3()"
+				<input type = "button" id="S3" 
 				value = "Stage 3" /> 
 		</div>
 		<div style="position:absolute;right:40%;top:25%;bottom:75%">
-				<input type = "button" id="S4" onclick = "changeStage4()"
+				<input type = "button" id="S4" 
 				value = "Stage 4" /> 
 		</div>
 		<div id="S5" style="position:absolute;right:40%;top:30%;bottom:70%">
-				<input type = "button" onclick = "changeStage5()"
+				<input type = "button" 
 				value = "Stage 5" /> 
 		</div>
 		<div id="S6" style="position:absolute;right:40%;top:35%;bottom:65%">
-				<input type = "button" onclick = "changeStage6()"
+				<input type = "button" 
 				value = "Stage 6" /> 
 		</div>
 		<div id="S7" style="position:absolute;right:40%;top:40%;bottom:60%">
-				<input type = "button" onclick = "changeStage7()"
+				<input type = "button" 
 				value = "Stage 7" /> 
 		</div>
 		
-
 
 		<script type="module">
 
 			 // Buttons startButton and resetButton
 			var animSpeedFrame = document.getElementById( 'animtime' );
 			var updateButton = document.getElementById( 'submit' );
+
+			document.getElementById("submit").onclick = ChangeSpeed;
+
+			document.getElementById("S1").onclick = ChangeState1;
+			document.getElementById("S2").onclick = ChangeState2;
+			document.getElementById("S3").onclick = ChangeState3;
+			document.getElementById("S4").onclick = ChangeState4;
+			document.getElementById("S5").onclick = ChangeState5;
+			document.getElementById("S6").onclick = ChangeState6;
+			document.getElementById("S7").onclick = ChangeState7;
+			
+
+			
 			
 
 			import * as THREE from '/build/three.module.js';
@@ -94,9 +106,10 @@
 
 			init();
 			animate();
-		
 
 			function init() {
+
+				var texture = new THREE.TextureLoader().load( "textures/Grass_1.jpg" );
 
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
@@ -121,7 +134,6 @@
 				light.shadow.camera.right = 120;
 				scene.add( light );
 
-				// scene.add( new CameraHelper( light.shadow.camera ) );
 
 				// ground
 				var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2000, 2000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
@@ -138,9 +150,6 @@
 				var loader = new FBXLoader();
 				loader.load( 'models/golfer.fbx', function ( object ) {
 					
-					//golf = object.children[0];
-					//golf.scale.set(0.8,0.8,0,8);
-					
 					mixer = new THREE.AnimationMixer( object );
 					mixer.timeScale = animtimer;
 					
@@ -155,8 +164,6 @@
 					object.traverse( function ( child ) {
 
 						if ( child.isMesh ) {
-
-							//child.scale.set(0.25, 0.25, 0.25,0);
 							child.castShadow = true;
 							child.receiveShadow = true;
 
@@ -166,6 +173,29 @@
 					object.scale.set(0.1, 0.1, 0.1);
 					scene.add( object );
 
+				} );
+
+				loader.load('models/GrassPatch1.fbx', function ( object )  {
+					
+
+					object.traverse( function ( child ) {
+
+						if ( child.isMesh ) {
+							child.castShadow = true;
+							child.receiveShadow = true;
+
+						}
+
+						if (child instanceof THREE.Mesh) {
+							// apply texture
+							child.material.map = texture;
+							child.material.needsUpdate = true;
+							}
+
+					} );
+
+					object.scale.set(1.2, 1.2, 1.2);
+					scene.add( object );
 				} );
 
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -195,10 +225,7 @@
 
 			}
 
-			//
-
 			function animate() {
-				//if (!isPlay) return;
 				requestAnimationFrame( animate );
 
 				var delta = clock.getDelta();
@@ -208,20 +235,17 @@
 				renderer.render( scene, camera );
 				stats.update();
 			}
-
-			function changeStage1(){
-				ocument.getElementById("S1").click();d
-
+			
+			function ChangeState1() {
+				
 				var delta = clock.getDelta();
 				delta = 0.415;
 				mixer.update( delta );
 				renderer.render( scene, camera );
 				stats.update();
-				mixer.StopAllActions();
 			}
-			function changeStage2(){
-				ocument.getElementById("S2").click();
-				
+
+			function ChangeState2() {
 				var delta = clock.getDelta();
 				delta = 0.9462;
 				mixer.update( delta );
@@ -229,9 +253,9 @@
 				stats.update();
 				requestAnimationFrame( animate );
 				clock.stop();
-				tester = 1;
 			}
-			function changeStage3(){
+
+			function ChangeState3() {
 				var delta = clock.getDelta();
 				delta = 1.2782;
 				mixer.update( delta );
@@ -239,9 +263,9 @@
 				stats.update();
 				requestAnimationFrame( animate );
 				clock.stop();
-				tester = 1;
 			}
-			function changeStage4(){
+
+			function ChangeState4() {
 				var delta = clock.getDelta();
 				delta = 1.4608;
 				mixer.update( delta );
@@ -249,9 +273,9 @@
 				stats.update();
 				requestAnimationFrame( animate );
 				clock.stop();
-				tester = 1;
 			}
-			function changeStage5(){
+
+			function ChangeState5() {
 				var delta = clock.getDelta();
 				delta = 1.494;
 				mixer.update( delta );
@@ -259,9 +283,9 @@
 				stats.update();
 				requestAnimationFrame( animate );
 				clock.stop();
-				tester = 1;
 			}
-			function changeStage6(){
+
+			function ChangeState6() {
 				var delta = clock.getDelta();
 				delta = 1.7098;
 				mixer.update( delta );
@@ -269,9 +293,9 @@
 				stats.update();
 				requestAnimationFrame( animate );
 				clock.stop();
-				tester = 1;
 			}
-			function changeStage7(){
+			
+			function ChangeState7() {
 				var delta = clock.getDelta();
 				delta = 1.9256;
 				mixer.update( delta );
@@ -279,10 +303,16 @@
 				stats.update();
 				requestAnimationFrame( animate );
 				clock.stop();
-				tester = 1;
 			}
 
-		</script>
+			function ChangeSpeed(){
+				requestAnimationFrame( animate );
+				animtimer = animSpeedFrame;
+				init();
+				animate();
+			}
+
+			</script>
 
 	</body>
 </html>

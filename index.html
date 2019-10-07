@@ -13,18 +13,25 @@
 			Integration PoC
 		</div>
 
-		<form action="/my-handling-form-page" method="post">
 			<div style="position:absolute;right:50%;top:50%;bottom:50%">
-			  <label for="animtimer">Animation Speed:</label>
-			  <input type="text" id="animtime" name="animtimer">
+				<label for="animtimer">Animation Speed:</label>
+				<input type="text" id="animtime" name="animtimer">
 			</div>
+
 			<div style="position:absolute;right:50%;top:54%;bottom:46%">
 				<label for="submit">Update Parameters:</label>
 				<input type="button" id="submit">
-			  </div>
-			<div id="startButtonId" style="position:absolute;right:40%;top:50%;bottom:50%">Start/Stop</div>
-			<div id="resetButtonId" style="position:absolute;right:40%;top:54%;bottom:46%">Reset</div>
-		</form>
+			</div>
+		
+		<div  style="position:absolute;right:40%;top:5%;bottom:96%">
+			<input type = "button" id="startButtonId"
+			value = "Start/Stop" /> 
+		</div>
+
+		<div  style="position:absolute;right:30%;top:5%;bottom:96%">
+			<input type = "button" id="resetButtonId" 
+			value = "Reset" /> 
+		</div>
 
 		<div  style="position:absolute;right:40%;top:10%;bottom:90%">
 				<input type = "button" id="S1" 
@@ -56,9 +63,18 @@
 		</div>
 		
 
-		<script type="module">
+		<script type="module">		
 
-			 // Buttons startButton and resetButton
+			import * as THREE from '/build/three.module.js';
+
+			//import {GUI} from '/jsm/libs/dat.gui.module.js';
+
+			import Stats from '/jsm/libs/stats.module.js';
+			import { OrbitControls } from '/jsm/controls/OrbitControls.js';
+
+			import { FBXLoader } from '/jsm/loaders/FBXLoader.js';
+
+			// Buttons startButton and resetButton
 			var animSpeedFrame = document.getElementById( 'animtime' );
 			var updateButton = document.getElementById( 'submit' );
 
@@ -71,27 +87,23 @@
 			document.getElementById("S5").onclick = ChangeState5;
 			document.getElementById("S6").onclick = ChangeState6;
 			document.getElementById("S7").onclick = ChangeState7;
-			
+
+			document.getElementById("startButtonId").onclick = StartStop;
+			document.getElementById("resetButtonId").onclick = ResetAnim;
 
 			
-			
-
-			import * as THREE from '/build/three.module.js';
-
-			import Stats from '/jsm/libs/stats.module.js';
-			import { OrbitControls } from '/jsm/controls/OrbitControls.js';
-
-			import { FBXLoader } from '/jsm/loaders/FBXLoader.js';
-
 			var container, stats, controls;
 			var camera, scene, renderer, light;
 
 			var clock = new THREE.Clock();
-			var tester = 0;
+			var delta;
+			var stageNum = 0;
 
+			//const gui = new GUI();
+			
 			var animpause = false;
 			// Determines pause or play.
-			var animtimer = 0.5;
+			var animtimer = 1;
 			// This is the time scaling factor.
 			var animframe;
 			// This is in seconds.
@@ -146,20 +158,28 @@
 				grid.material.transparent = true;
 				scene.add( grid );
 
+				// GUI
+				/*
+				const folder = gui.addFolder(`Animation Controller`);
+				folder.add(animframe, 'x', .1, 1.5)
+					.name('Animation Speed')
+					.onChange(requestRenderIfNotRequested);
+				folder.open();
+				*/
+
 				// model
 				var loader = new FBXLoader();
-				loader.load( 'models/golfer.fbx', function ( object ) {
+				loader.load( 'models/golfer17.fbx', function ( object ) {
 					
 					mixer = new THREE.AnimationMixer( object );
 					mixer.timeScale = animtimer;
 					
 
-					var action = mixer.clipAction( object.animations[ 4 ] );
+					var action = mixer.clipAction( object.animations[ 3 ] );
 					action.play();
 					// Have to add animation selecter here.
 
-					mixer.time = animframe;
-					mixer.paused = animpause;
+
 
 					object.traverse( function ( child ) {
 
@@ -194,7 +214,7 @@
 
 					} );
 
-					object.scale.set(1.2, 1.2, 1.2);
+					object.scale.set(1.6, 1.6, 1.6);
 					scene.add( object );
 				} );
 
@@ -228,7 +248,7 @@
 			function animate() {
 				requestAnimationFrame( animate );
 
-				var delta = clock.getDelta();
+				delta = clock.getDelta();
 				
 
 				if ( mixer ) mixer.update( delta );
@@ -237,16 +257,22 @@
 			}
 			
 			function ChangeState1() {
+
+				mixer.time =0.415;
 				
-				var delta = clock.getDelta();
-				delta = 0.415;
-				mixer.update( delta );
+				//delta = clock.getDelta();
+
+				//delta = 0.415;
+				//mixer.update( delta );
 				renderer.render( scene, camera );
 				stats.update();
+				requestAnimationFrame( animate );
+				clock.stop();
 			}
 
 			function ChangeState2() {
-				var delta = clock.getDelta();
+				delta = clock.getDelta();
+
 				delta = 0.9462;
 				mixer.update( delta );
 				renderer.render( scene, camera );
@@ -256,7 +282,8 @@
 			}
 
 			function ChangeState3() {
-				var delta = clock.getDelta();
+				delta = clock.getDelta();
+
 				delta = 1.2782;
 				mixer.update( delta );
 				renderer.render( scene, camera );
@@ -266,7 +293,8 @@
 			}
 
 			function ChangeState4() {
-				var delta = clock.getDelta();
+				delta = clock.getDelta();
+
 				delta = 1.4608;
 				mixer.update( delta );
 				renderer.render( scene, camera );
@@ -276,7 +304,8 @@
 			}
 
 			function ChangeState5() {
-				var delta = clock.getDelta();
+				delta = clock.getDelta();
+
 				delta = 1.494;
 				mixer.update( delta );
 				renderer.render( scene, camera );
@@ -286,7 +315,8 @@
 			}
 
 			function ChangeState6() {
-				var delta = clock.getDelta();
+				delta = clock.getDelta();
+
 				delta = 1.7098;
 				mixer.update( delta );
 				renderer.render( scene, camera );
@@ -296,7 +326,8 @@
 			}
 			
 			function ChangeState7() {
-				var delta = clock.getDelta();
+				delta = clock.getDelta();
+
 				delta = 1.9256;
 				mixer.update( delta );
 				renderer.render( scene, camera );
@@ -308,8 +339,22 @@
 			function ChangeSpeed(){
 				requestAnimationFrame( animate );
 				animtimer = animSpeedFrame;
-				init();
-				animate();
+				mixer.timeScale = animtimer;
+				renderer.render( scene, camera );
+				stats.update();
+			}
+
+			function StartStop(){
+				cancelAnimationFrame( animate );
+			}
+
+			function ResetAnim(){
+				clock.start();
+				delta = clock.getDelta();
+				mixer.update( delta );
+				renderer.render( scene, camera );
+				stats.update();
+				requestAnimationFrame( animate );
 			}
 
 			</script>

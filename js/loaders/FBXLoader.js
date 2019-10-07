@@ -1620,9 +1620,9 @@ THREE.FBXLoader = ( function () {
 
 			if ( skeleton ) {
 
-				geo.addAttribute( 'skinIndex', new THREE.Uint16BufferAttribute( buffers.weightsIndices, 4 ) );
+				geo.addAttribute( 'skinIndex', new THREE.Uint16BufferAttribute( buffers.weightsIndices, 8 ) );
 
-				geo.addAttribute( 'skinWeight', new THREE.Float32BufferAttribute( buffers.vertexWeights, 4 ) );
+				geo.addAttribute( 'skinWeight', new THREE.Float32BufferAttribute( buffers.vertexWeights, 8 ) );
 
 				// used later to bind the skeleton to the model
 				geo.FBX_Deformer = skeleton;
@@ -1820,7 +1820,7 @@ THREE.FBXLoader = ( function () {
 				var weightIndices = [];
 				var weights = [];
 
-				facePositionIndexes.push( vertexIndex * 3, vertexIndex * 3 + 1, vertexIndex * 3 + 2 );
+				facePositionIndexes.push( vertexIndex * 4, vertexIndex * 4 + 1, vertexIndex * 4 + 2 );
 
 				if ( geoInfo.color ) {
 
@@ -1844,17 +1844,17 @@ THREE.FBXLoader = ( function () {
 
 					}
 
-					if ( weights.length > 4 ) {
+					if ( weights.length > 8 ) {
 
 						if ( ! displayedWeightsWarning ) {
 
-							console.warn( 'THREE.FBXLoader: Vertex has more than 4 skinning weights assigned to vertex. Deleting additional weights.' );
+							console.warn( 'THREE.FBXLoader: Vertex has more than 8 skinning weights assigned to vertex. Deleting additional weights.' );
 							displayedWeightsWarning = true;
 
 						}
 
-						var wIndex = [ 0, 0, 0, 0 ];
-						var Weight = [ 0, 0, 0, 0 ];
+						var wIndex = [ 0, 0, 0, 0, 0, 0, 0, 0 ];
+						var Weight = [ 0, 0, 0, 0, 0, 0, 0, 0 ];
 
 						weights.forEach( function ( weight, weightIndex ) {
 
@@ -1884,14 +1884,14 @@ THREE.FBXLoader = ( function () {
 					}
 
 					// if the weight array is shorter than 4 pad with 0s
-					while ( weights.length < 4 ) {
+					while ( weights.length < 8 ) {
 
 						weights.push( 0 );
 						weightIndices.push( 0 );
 
 					}
 
-					for ( var i = 0; i < 4; ++ i ) {
+					for ( var i = 0; i < 8; ++ i ) {
 
 						faceWeights.push( weights[ i ] );
 						faceWeightIndices.push( weightIndices[ i ] );
@@ -1981,31 +1981,57 @@ THREE.FBXLoader = ( function () {
 					buffers.vertexWeights.push( faceWeights[ 1 ] );
 					buffers.vertexWeights.push( faceWeights[ 2 ] );
 					buffers.vertexWeights.push( faceWeights[ 3 ] );
+					buffers.vertexWeights.push( faceWeights[ 4 ] );
+					buffers.vertexWeights.push( faceWeights[ 5 ] );
+					buffers.vertexWeights.push( faceWeights[ 6 ] );
+					buffers.vertexWeights.push( faceWeights[ 7 ] );
 
 					buffers.vertexWeights.push( faceWeights[ ( i - 1 ) * 4 ] );
 					buffers.vertexWeights.push( faceWeights[ ( i - 1 ) * 4 + 1 ] );
 					buffers.vertexWeights.push( faceWeights[ ( i - 1 ) * 4 + 2 ] );
 					buffers.vertexWeights.push( faceWeights[ ( i - 1 ) * 4 + 3 ] );
+					buffers.vertexWeights.push( faceWeights[ ( i - 1 ) * 4 + 4 ] );
+					buffers.vertexWeights.push( faceWeights[ ( i - 1 ) * 4 + 5 ] );
+					buffers.vertexWeights.push( faceWeights[ ( i - 1 ) * 4 + 6 ] );
+					buffers.vertexWeights.push( faceWeights[ ( i - 1 ) * 4 + 7 ] );
 
 					buffers.vertexWeights.push( faceWeights[ i * 4 ] );
 					buffers.vertexWeights.push( faceWeights[ i * 4 + 1 ] );
 					buffers.vertexWeights.push( faceWeights[ i * 4 + 2 ] );
 					buffers.vertexWeights.push( faceWeights[ i * 4 + 3 ] );
+					buffers.vertexWeights.push( faceWeights[ i * 4 + 4 ] );
+					buffers.vertexWeights.push( faceWeights[ i * 4 + 5 ] );
+					buffers.vertexWeights.push( faceWeights[ i * 4 + 6 ] );
+					buffers.vertexWeights.push( faceWeights[ i * 4 + 7 ] );
 
 					buffers.weightsIndices.push( faceWeightIndices[ 0 ] );
 					buffers.weightsIndices.push( faceWeightIndices[ 1 ] );
 					buffers.weightsIndices.push( faceWeightIndices[ 2 ] );
 					buffers.weightsIndices.push( faceWeightIndices[ 3 ] );
+					buffers.weightsIndices.push( faceWeightIndices[ 4 ] );
+					buffers.weightsIndices.push( faceWeightIndices[ 5 ] );
+					buffers.weightsIndices.push( faceWeightIndices[ 6 ] );
+					buffers.weightsIndices.push( faceWeightIndices[ 7 ] );
 
 					buffers.weightsIndices.push( faceWeightIndices[ ( i - 1 ) * 4 ] );
 					buffers.weightsIndices.push( faceWeightIndices[ ( i - 1 ) * 4 + 1 ] );
 					buffers.weightsIndices.push( faceWeightIndices[ ( i - 1 ) * 4 + 2 ] );
 					buffers.weightsIndices.push( faceWeightIndices[ ( i - 1 ) * 4 + 3 ] );
+					buffers.weightsIndices.push( faceWeightIndices[ ( i - 1 ) * 4 + 4 ] );
+					buffers.weightsIndices.push( faceWeightIndices[ ( i - 1 ) * 4 + 5 ] );
+					buffers.weightsIndices.push( faceWeightIndices[ ( i - 1 ) * 4 + 6 ] );
+					buffers.weightsIndices.push( faceWeightIndices[ ( i - 1 ) * 4 + 7 ] );
+
 
 					buffers.weightsIndices.push( faceWeightIndices[ i * 4 ] );
 					buffers.weightsIndices.push( faceWeightIndices[ i * 4 + 1 ] );
 					buffers.weightsIndices.push( faceWeightIndices[ i * 4 + 2 ] );
 					buffers.weightsIndices.push( faceWeightIndices[ i * 4 + 3 ] );
+					buffers.weightsIndices.push( faceWeightIndices[ i * 4 + 4 ] );
+					buffers.weightsIndices.push( faceWeightIndices[ i * 4 + 5 ] );
+					buffers.weightsIndices.push( faceWeightIndices[ i * 4 + 6 ] );
+					buffers.weightsIndices.push( faceWeightIndices[ i * 4 + 7 ] );
+
 
 				}
 

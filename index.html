@@ -506,7 +506,7 @@
 			function ChangeSpeed(){
 				requestAnimationFrame( animate );
 				//mixer.timeScale = object3.AnimationSpeed;
-				mixer.timeScale = document.getElementById("speedId");
+				mixer.timeScale = document.getElementById("speedId").value;
 				renderer.render( scene, camera );
 				stats.update();
 			}

@@ -12,29 +12,83 @@
 			Golf Assitant Three.js <br>
 			Integration PoC
 		</div>
-		
-		<script src="https://d3js.org/d3.v5.js"></script>
+
+		<div  style="position:absolute;right:52%;top:80%;bottom:22%">
+			<input type = "button" id="startId" 
+			value = "Stop" /> 
+		</div>
+
+		<div  style="position:absolute;right:35%;top:80%;bottom:22%">
+			<input type = "button" id="resetId" 
+			value = "Reset" /> 
+		</div>
+
+		<div  style="position:absolute;right:82%;top:85%;bottom:15%">
+			<input type = "button" id="S1" 
+			value = "Stage 1" /> 
+		</div>
+		<div style="position:absolute;right:62%;top:85%;bottom:15%">
+			<input type = "button" id="S2" 
+			value = "Stage 2" /> 
+		</div>
+		<div style="position:absolute;right:42%;top:85%;bottom:15%">
+			<input type = "button" id="S3" 
+			value = "Stage 3" /> 
+		</div>
+		<div style="position:absolute;right:22%;top:85%;bottom:15%">
+			<input type = "button" id="S4" 
+			value = "Stage 4" /> 
+		</div>
+		<div id="S5" style="position:absolute;right:2%;top:85%;bottom:15%">
+			<input type = "button" 
+			value = "Stage 5" /> 
+		</div>
+		<div id="S6" style="position:absolute;right:52%;top:90%;bottom:10%">
+			<input type = "button" 
+			value = "Stage 6" /> 
+		</div>
+		<div id="S7" style="position:absolute;right:32%;top:90%;bottom:10%">
+			<input type = "button" 
+			value = "Stage 7" /> 
+		</div>
+
+		<script src="https://d3js.org/d3.v5.js">//loading parser</script>
 
 		<script type="module">	
 			console.clear();	
 
 			import * as THREE from '/build/three.module.js';
 
-			import {GUI} from '/jsm/libs/dat.gui.module.js';
+			//import {GUI} from '/jsm/libs/dat.gui.module.js';
 
 			import Stats from '/jsm/libs/stats.module.js';
 			import { OrbitControls } from '/jsm/controls/OrbitControls.js';
 
 			import { FBXLoader } from '/jsm/loaders/FBXLoader.js';
 			
+			//Mobile Control
+			//document.getElementById("submit").onclick = ChangeSpeed;
+			document.getElementById("S1").onclick = ChangeState1;
+			document.getElementById("S2").onclick = ChangeState2;
+			document.getElementById("S3").onclick = ChangeState3;
+			document.getElementById("S4").onclick = ChangeState4;
+			document.getElementById("S5").onclick = ChangeState5;
+			document.getElementById("S6").onclick = ChangeState6;
+			document.getElementById("S7").onclick = ChangeState7;
+			document.getElementById("startId").onclick = StartStop;
+			document.getElementById("resetId").onclick = ResetAnim;
+
+
+
+
 			var ScalingFactor = 1;
 			var CanvasHeight = window.innerHeight * ScalingFactor;
 			var CanvasWidth = window.innerWidth * ScalingFactor;
 
 			
 			var container, stats, controls;
-			var cameraO, cameraF, cameraS, camera, scene, renderer, light;
-			var camselect;
+			var camera, scene, renderer, light;
+			var cameraO, cameraF, cameraS;
 
 			var clock = new THREE.Clock();
 			var delta;
@@ -53,6 +107,7 @@
 
 			var mixer;
 
+			/*{
 			// GUI
 			var gui = new GUI();
 
@@ -102,20 +157,20 @@
 			]).onChange(function (value){
 				StageSelect();
 			});
-			/*
+			
 			folder1.add(object2, 'Stage2', 1, 7, 1)
 			.onChange(function (value){
 				StageSelect();
 			});
 			folder1.close();
-			*/
+			
 			var folder2 = gui.addFolder('Parameters');
 			folder2.add(object3, 'AnimationSpeed', 0, 2 );
 			folder2.add(object3, 'UpdateAnimation'); 
 
 			folder2.close();
 
-			
+			*/
 
 
 
@@ -129,9 +184,9 @@
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
 
-				//Main camera.
+				//Main camera. Currently setup for S5.
 				camera = new THREE.PerspectiveCamera( 65, CanvasWidth / CanvasHeight, 1, 20000 );
-				camera.position.set( 100, 200, 350 );
+				camera.position.set( 100, 200, 400 ); // X Z Y
 
 				//Orbiting camera.
 				cameraO = new THREE.PerspectiveCamera( 65, CanvasWidth / CanvasHeight, 1, 20000 );
@@ -233,7 +288,7 @@
 				renderer.shadowMap.enabled = true;
 				container.appendChild( renderer.domElement );
 
-				controls = new OrbitControls( cameraO, renderer.domElement );
+				controls = new OrbitControls( camera, renderer.domElement );
 				controls.target.set( 0, 100, 0 );
 				controls.update();
 
@@ -249,7 +304,7 @@
 				requestAnimationFrame( animate );
 				delta = clock.getDelta();
 				if ( mixer ) mixer.update( delta );
-				
+				/*
 				switch(object2.Camera){
 					case 'Frontal':
 						camera = cameraF;
@@ -261,7 +316,7 @@
 						camera = cameraO;
 						break;
 				}
-				
+				*/
 				renderer.render( scene, camera );
 				stats.update();
 			}
@@ -441,6 +496,13 @@
 				renderer.render( scene, camera );
 				stats.update();
 			}
+
+			function StartStop(){
+
+			}
+			function ResetAnim(){
+				
+			} 
 			</script>
 
 	</body>

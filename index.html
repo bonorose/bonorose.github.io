@@ -12,48 +12,11 @@
 			Golf Assitant Three.js <br>
 			Integration PoC
 		</div>
-
-		<div style="position:absolute;right:50%;top:50%;bottom:50%">
-				<label for="animtimer">Animation Speed:</label>
-				<input type="text" id="animtime" name="animtimer">
-		</div>
-
-		<div style="position:absolute;right:50%;top:54%;bottom:46%">
-				<label for="submit">Update Parameters:</label>
-				<input type="button" id="submit">
-		</div>
-
-		<div  style="position:absolute;right:40%;top:10%;bottom:90%">
-				<input type = "button" id="S1" 
-				value = "Stage 1" /> 
-		</div>
-		<div style="position:absolute;right:40%;top:15%;bottom:85%">
-				<input type = "button" id="S2" 
-				value = "Stage 2" /> 
-		</div>
-		<div style="position:absolute;right:40%;top:20%;bottom:80%">
-				<input type = "button" id="S3" 
-				value = "Stage 3" /> 
-		</div>
-		<div style="position:absolute;right:40%;top:25%;bottom:75%">
-				<input type = "button" id="S4" 
-				value = "Stage 4" /> 
-		</div>
-		<div id="S5" style="position:absolute;right:40%;top:30%;bottom:70%">
-				<input type = "button" 
-				value = "Stage 5" /> 
-		</div>
-		<div id="S6" style="position:absolute;right:40%;top:35%;bottom:65%">
-				<input type = "button" 
-				value = "Stage 6" /> 
-		</div>
-		<div id="S7" style="position:absolute;right:40%;top:40%;bottom:60%">
-				<input type = "button" 
-				value = "Stage 7" /> 
-		</div>
 		
+		<script src="https://d3js.org/d3.v5.js"></script>
 
-		<script type="module">		
+		<script type="module">	
+			console.clear();	
 
 			import * as THREE from '/build/three.module.js';
 
@@ -63,38 +26,30 @@
 			import { OrbitControls } from '/jsm/controls/OrbitControls.js';
 
 			import { FBXLoader } from '/jsm/loaders/FBXLoader.js';
-
-			// Buttons startButton and resetButton
-			var animSpeedFrame = document.getElementById( 'animtime' );
-			var updateButton = document.getElementById( 'submit' );
-
-			document.getElementById("submit").onclick = ChangeSpeed;
-
-			document.getElementById("S1").onclick = ChangeState1;
-			document.getElementById("S2").onclick = ChangeState2;
-			document.getElementById("S3").onclick = ChangeState3;
-			document.getElementById("S4").onclick = ChangeState4;
-			document.getElementById("S5").onclick = ChangeState5;
-			document.getElementById("S6").onclick = ChangeState6;
-			document.getElementById("S7").onclick = ChangeState7;
 			
-			var CanvasHeight = window.innerHeight;
-			var CanvasWidth = window.innerWidth;
+			var ScalingFactor = 0.5;
+			var CanvasHeight = window.innerHeight * ScalingFactor;
+			var CanvasWidth = window.innerWidth * ScalingFactor;
 
 			
 			var container, stats, controls;
-			var camera, scene, renderer, light;
+			var cameraO, cameraF, cameraS, camera, scene, renderer, light;
+			var camselect;
 
 			var clock = new THREE.Clock();
 			var delta;
 			var stageNum = 0;
 			
-			var animpause = false;
 			// Determines pause or play.
-			var animtimer = 1;
+			var animpause = false;
+
+			// Default speed of animation.
 			// This is the time scaling factor.
-			var animframe;
+			var animtimer = 1;
+
 			// This is in seconds.
+			var animframe;
+			
 
 			var mixer;
 
@@ -107,20 +62,21 @@
 					clock.stop();
 				},
 				Reset: function(){
-
+					clock.start();
 				},
 			};
 
 			var object2 = {
 				Camera: 'string1',
-  				Stage: 'string2'
+  				Stage: 'string2',
+				Stage2: 1
 			};
 
 			var object3 = {
 				AnimationSpeed: 1,
 				UpdateAnimation: function(){
 					 ChangeSpeed();
-					 alert('Parameters updated.');
+					 //alert('Parameters updated.');
 					 }
 		
 			};
@@ -136,16 +92,26 @@
 			//Have to find a way to check amount of stages recorded before loading gui or just reloading when the json is uploaded.
 			var folder1 = gui.addFolder('Control');
 			folder1.add(object2, 'Camera',[
-				'Camera1', 'Camera2'
-			]);
+				'Frontal', 'Side', 'Orbiter'
+			]).onChange(function (value) {
+				animate();
+			});
+			
 			folder1.add(object2, 'Stage',[
-				'Stage1', 'Stage2', 'Stage3', 'Stage4', 'Stage5', 'Stage6', 'Stage7'
-			]);
+				'S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7'
+			]).onChange(function (value){
+				StageSelect();
+			});
+			/*
+			folder1.add(object2, 'Stage2', 1, 7, 1)
+			.onChange(function (value){
+				StageSelect();
+			});
 			folder1.close();
-
+			*/
 			var folder2 = gui.addFolder('Parameters');
 			folder2.add(object3, 'AnimationSpeed', 0, 2 );
-			folder2.add(object3, 'UpdateAnimation');
+			folder2.add(object3, 'UpdateAnimation'); 
 
 			folder2.close();
 
@@ -163,8 +129,22 @@
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
 
+				//Main camera.
 				camera = new THREE.PerspectiveCamera( 65, CanvasWidth / CanvasHeight, 1, 20000 );
-				camera.position.set( 200, 300, 400 );
+				camera.position.set( 100, 200, 350 );
+
+				//Orbiting camera.
+				cameraO = new THREE.PerspectiveCamera( 65, CanvasWidth / CanvasHeight, 1, 20000 );
+				cameraO.position.set( 200, 300, 400 );
+
+				//Frontal Camera
+				cameraF = new THREE.PerspectiveCamera( 65, CanvasWidth / CanvasHeight, 1, 20000 );
+				cameraF.position.set( 0, 150, 350 );
+
+				//Side Camera
+				cameraS = new THREE.PerspectiveCamera( 65, CanvasWidth / CanvasHeight, 1, 20000 );
+				cameraS.position.set( -300, 150, 200 );
+				cameraS.rotation.set(0, -1 , 0);
 
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color( 0xa0a0a0 );
@@ -200,6 +180,7 @@
 				loader.load( 'models/golfer17.fbx', function ( object ) {
 					
 					mixer = new THREE.AnimationMixer( object );
+					//default speed of animation
 					mixer.timeScale = animtimer;
 					
 
@@ -252,7 +233,7 @@
 				renderer.shadowMap.enabled = true;
 				container.appendChild( renderer.domElement );
 
-				controls = new OrbitControls( camera, renderer.domElement );
+				controls = new OrbitControls( cameraO, renderer.domElement );
 				controls.target.set( 0, 100, 0 );
 				controls.update();
 
@@ -264,34 +245,124 @@
 
 			}
 
-			function onWindowResize() {
-
-				camera.aspect = CanvasWidth / CanvasHeight;
-				camera.updateProjectionMatrix();
-
-				renderer.setSize( CanvasWidth, CanvasHeight );
-
-			}
-
 			function animate() {
 				requestAnimationFrame( animate );
-
 				delta = clock.getDelta();
-				
-
 				if ( mixer ) mixer.update( delta );
+				
+				switch(object2.Camera){
+					case 'Frontal':
+						camera = cameraF;
+						break;
+					case 'Side':
+						camera = cameraS;
+						break;
+					case 'Orbiter':
+						camera = cameraO;
+						break;
+				}
+				
 				renderer.render( scene, camera );
 				stats.update();
 			}
-			
+
+			function SensorDraw(){
+
+			}
+
+			function onWindowResize() {
+
+			camera.aspect = CanvasWidth / CanvasHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( CanvasWidth, CanvasHeight );
+
+			}
+
+			function StageSelect(){
+
+				switch(object2.Stage){
+					case 'S1' :
+						//mixer.time = 0.415;
+						clock.stop();
+						mixer.time = 0;
+						clock.start();
+						mixer.update( 0.415 );
+						renderer.render( scene, camera );
+						stats.update();
+						requestAnimationFrame( animate );
+						clock.stop();
+						break;
+					case 'S2':
+						//mixer.time = 0.9462;
+						clock.stop();
+						clock.start();
+						mixer.update( 0.9462 );
+						renderer.render( scene, camera );
+						stats.update();
+						requestAnimationFrame( animate );
+						clock.stop();
+						break;
+					case 'S3':
+						mixer.setTime = 1.2782;
+						renderer.render( scene, camera );
+						stats.update();
+						requestAnimationFrame( animate );
+						clock.stop();
+						break;
+					case 'S4':
+						mixer.setTime = 1.4608;
+						renderer.render( scene, camera );
+						stats.update();
+						requestAnimationFrame( animate );
+						clock.stop();
+						break;
+					case 'S5':
+						mixer.setTime = 1.494;
+						renderer.render( scene, camera );
+						stats.update();
+						requestAnimationFrame( animate );
+						clock.stop();
+						break;
+					case 'S6':
+						//mixer.setTime = 0;
+						//mixer.update( 1.7098 );
+						var timeInSeconds = 1.7098;
+						function seekAnimationTime(mixer, timeInSeconds){
+							mixer.time=0;
+							for(var i=0;i<mixer._actions.length;i++){
+								mixer._actions[i].time=0;
+								}
+							mixer.update(timeInSeconds)
+						}
+						renderer.render( scene, camera );
+						stats.update();
+						requestAnimationFrame( animate );
+						clock.stop();
+						break;
+					case 'S7':
+						//mixer.setTime = 0;
+						//mixer.update( 1.9256 );
+						clock.stop();
+						clock.start();
+						mixer.update( 1.9256 );
+						renderer.render( scene, camera );
+						stats.update();
+						requestAnimationFrame( animate );
+						clock.stop();
+						break;
+				}
+			}
+
 			function ChangeState1() {
 
-				mixer.time =0.415;
+				
 				
 				//delta = clock.getDelta();
 
 				//delta = 0.415;
 				//mixer.update( delta );
+				mixer.time =0.415;
 				renderer.render( scene, camera );
 				stats.update();
 				requestAnimationFrame( animate );
@@ -370,16 +441,6 @@
 				renderer.render( scene, camera );
 				stats.update();
 			}
-
-			function ResetAnim(){
-				clock.start();
-				delta = clock.getDelta();
-				mixer.update( delta );
-				renderer.render( scene, camera );
-				stats.update();
-				requestAnimationFrame( animate );
-			}
-
 			</script>
 
 	</body>

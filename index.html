@@ -80,7 +80,7 @@
 			document.getElementById("S5").onclick = ChangeState5;
 			document.getElementById("S6").onclick = ChangeState6;
 			document.getElementById("S7").onclick = ChangeState7;
-			document.getElementById("startId").onclick = StartStop;
+			document.getElementById("startId").onclick = StopAnim;
 			document.getElementById("resetId").onclick = ResetAnim;
 
 
@@ -502,11 +502,11 @@
 				stats.update();
 			}
 
-			function StartStop(){
-
+			function StopAnim(){
+				clock.stop();
 			}
 			function ResetAnim(){
-
+				clock.start();
 			} 
 			</script>
 

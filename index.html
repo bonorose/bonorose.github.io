@@ -13,15 +13,15 @@
 			Integration PoC
 		</div>
 
-			<div style="position:absolute;right:50%;top:50%;bottom:50%">
+		<div style="position:absolute;right:50%;top:50%;bottom:50%">
 				<label for="animtimer">Animation Speed:</label>
 				<input type="text" id="animtime" name="animtimer">
-			</div>
+		</div>
 
-			<div style="position:absolute;right:50%;top:54%;bottom:46%">
+		<div style="position:absolute;right:50%;top:54%;bottom:46%">
 				<label for="submit">Update Parameters:</label>
 				<input type="button" id="submit">
-			</div>
+		</div>
 		
 		<div  style="position:absolute;right:40%;top:5%;bottom:96%">
 			<input type = "button" id="startButtonId"
@@ -67,7 +67,7 @@
 
 			import * as THREE from '/build/three.module.js';
 
-			//import {GUI} from '/jsm/libs/dat.gui.module.js';
+			import {GUI} from '/jsm/libs/dat.gui.module.js';
 
 			import Stats from '/jsm/libs/stats.module.js';
 			import { OrbitControls } from '/jsm/controls/OrbitControls.js';
@@ -92,14 +92,16 @@
 			document.getElementById("resetButtonId").onclick = ResetAnim;
 
 			
+			var CanvasHeight = window.innerHeight;
+			var CanvasWidth = window.innerWidth;
+
+			
 			var container, stats, controls;
 			var camera, scene, renderer, light;
 
 			var clock = new THREE.Clock();
 			var delta;
 			var stageNum = 0;
-
-			//const gui = new GUI();
 			
 			var animpause = false;
 			// Determines pause or play.
@@ -110,11 +112,60 @@
 
 			var mixer;
 
+			// GUI
+			var gui = new GUI();
+
+			var object1 = {
+				Dynamic: false ,
+				Stop: function(){
+					clock.stop();
+				},
+				Reset: function(){
+
+				},
+			};
+
+			var object2 = {
+				Camera: 'string1',
+  				Stage: 'string2'
+			};
+
+			var object3 = {
+				AnimationSpeed: 1,
+				UpdateAnimation: function(){
+					 ChangeSpeed();
+					 alert('Parameters updated.');
+					 }
+		
+			};
+
+			gui.remember(object1);
+			gui.remember(object2);
+			gui.remember(object3);
+
+			gui.add(object1, 'Dynamic');
+			gui.add(object1, 'Stop');
+			gui.add(object1, 'Reset');
+			
+			//Have to find a way to check amount of stages recorded before loading gui or just reloading when the json is uploaded.
+			var folder1 = gui.addFolder('Control');
+			folder1.add(object2, 'Camera',[
+				'Camera1', 'Camera2'
+			]);
+			folder1.add(object2, 'Stage',[
+				'Stage1', 'Stage2', 'Stage3', 'Stage4', 'Stage5', 'Stage6', 'Stage7'
+			]);
+			folder1.close();
+
+			var folder2 = gui.addFolder('Parameters');
+			folder2.add(object3, 'AnimationSpeed', 0, 2 );
+			folder2.add(object3, 'UpdateAnimation');
+
+			folder2.close();
+
 			
 
 
-			var CanvasHeight =window.innerHeight/2;
-			var CanvasWidth =window.innerWidth/2;
 
 			init();
 			animate();
@@ -157,15 +208,6 @@
 				grid.material.opacity = 0.1;
 				grid.material.transparent = true;
 				scene.add( grid );
-
-				// GUI
-				/*
-				const folder = gui.addFolder(`Animation Controller`);
-				folder.add(animframe, 'x', .1, 1.5)
-					.name('Animation Speed')
-					.onChange(requestRenderIfNotRequested);
-				folder.open();
-				*/
 
 				// model
 				var loader = new FBXLoader();
@@ -338,8 +380,7 @@
 
 			function ChangeSpeed(){
 				requestAnimationFrame( animate );
-				animtimer = animSpeedFrame;
-				mixer.timeScale = animtimer;
+				mixer.timeScale = object3.AnimationSpeed;
 				renderer.render( scene, camera );
 				stats.update();
 			}

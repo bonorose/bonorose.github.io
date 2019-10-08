@@ -22,16 +22,6 @@
 				<label for="submit">Update Parameters:</label>
 				<input type="button" id="submit">
 		</div>
-		
-		<div  style="position:absolute;right:40%;top:5%;bottom:96%">
-			<input type = "button" id="startButtonId"
-			value = "Start/Stop" /> 
-		</div>
-
-		<div  style="position:absolute;right:30%;top:5%;bottom:96%">
-			<input type = "button" id="resetButtonId" 
-			value = "Reset" /> 
-		</div>
 
 		<div  style="position:absolute;right:40%;top:10%;bottom:90%">
 				<input type = "button" id="S1" 
@@ -87,10 +77,6 @@
 			document.getElementById("S5").onclick = ChangeState5;
 			document.getElementById("S6").onclick = ChangeState6;
 			document.getElementById("S7").onclick = ChangeState7;
-
-			document.getElementById("startButtonId").onclick = StartStop;
-			document.getElementById("resetButtonId").onclick = ResetAnim;
-
 			
 			var CanvasHeight = window.innerHeight;
 			var CanvasWidth = window.innerWidth;
@@ -383,10 +369,6 @@
 				mixer.timeScale = object3.AnimationSpeed;
 				renderer.render( scene, camera );
 				stats.update();
-			}
-
-			function StartStop(){
-				cancelAnimationFrame( animate );
 			}
 
 			function ResetAnim(){

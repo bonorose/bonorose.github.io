@@ -13,6 +13,11 @@
 			Integration PoC
 		</div>
 
+		<div  style="position:absolute;right:82%;top:12%">
+			<input type = "text" id="speedId"  maxlength="4" size="4"
+			value = "Speed" /> 
+		</div>
+
 		<div  style="position:absolute;right:80%;top:8%">
 			<input type = "button" id="dynamicId" 
 			value = "Dynamic" /> 
@@ -72,7 +77,6 @@
 			import { FBXLoader } from '/jsm/loaders/FBXLoader.js';
 			
 			//Mobile Control
-			//document.getElementById("submit").onclick = ChangeSpeed;
 			document.getElementById("S1").onclick = ChangeState1;
 			document.getElementById("S2").onclick = ChangeState2;
 			document.getElementById("S3").onclick = ChangeState3;
@@ -82,7 +86,7 @@
 			document.getElementById("S7").onclick = ChangeState7;
 			document.getElementById("startId").onclick = StopAnim;
 			document.getElementById("resetId").onclick = ResetAnim;
-
+			document.getElementById("speedId").onchange = ChangeSpeed;
 
 
 
@@ -193,6 +197,7 @@
 				camera = new THREE.PerspectiveCamera( 65, CanvasWidth / CanvasHeight, 1, 20000 );
 				camera.position.set( 100, 200, 400 ); // X Z Y
 
+				/*
 				//Orbiting camera.
 				cameraO = new THREE.PerspectiveCamera( 65, CanvasWidth / CanvasHeight, 1, 20000 );
 				cameraO.position.set( 200, 300, 400 );
@@ -205,6 +210,7 @@
 				cameraS = new THREE.PerspectiveCamera( 65, CanvasWidth / CanvasHeight, 1, 20000 );
 				cameraS.position.set( -300, 150, 200 );
 				cameraS.rotation.set(0, -1 , 0);
+				*/
 
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color( 0xa0a0a0 );
@@ -309,6 +315,7 @@
 				requestAnimationFrame( animate );
 				delta = clock.getDelta();
 				if ( mixer ) mixer.update( delta );
+
 				/*
 				switch(object2.Camera){
 					case 'Frontal':
@@ -322,6 +329,7 @@
 						break;
 				}
 				*/
+
 				renderer.render( scene, camera );
 				stats.update();
 			}
@@ -497,17 +505,20 @@
 
 			function ChangeSpeed(){
 				requestAnimationFrame( animate );
-				mixer.timeScale = object3.AnimationSpeed;
+				//mixer.timeScale = object3.AnimationSpeed;
+				mixer.timeScale = document.getElementById("speedId");
 				renderer.render( scene, camera );
 				stats.update();
 			}
 
+			//stops and resumes the THREE clock
 			function StopAnim(){
 				clock.stop();
 			}
 			function ResetAnim(){
 				clock.start();
 			} 
+			
 			</script>
 
 	</body>

@@ -8,9 +8,30 @@
 	</head>
 
 	<body>
+		<div style="position:absolute;bottom:8%;right:0%" id="resizeID">
+		<button type="button" class="btn btn-secondary" id="sizeID"> <img src="icons/expand-arrows-alt-solid.svg"	width="40" /> </button>
+		</div>
 
-		
-		<div  style="position:absolute;right:52%;top:85%">
+		<div class="btn-group fixed-bottom"  role="group" id="buttonsID">
+			<button type="button" class="btn btn-secondary" id="leftID"> <img src="icons/backward-solid.svg"	width="40" /> </button>
+			<button type="button" class="btn btn-secondary" id="middleID"> <img src="icons/play-circle-solid.svg"	width="40" /> </button>
+			<button type="button" class="btn btn-secondary" id="rightID"> <img src="icons/forward-solid.svg"	width="40" /> </button>	
+		</div>
+
+
+		<link rel="stylesheet" href="css/bootstrap.css">
+
+		<script src="js/jquery-3.4.1.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+
+		<script src="https://d3js.org/d3.v5.js" charset="utf-8">//loading parser</script>
+
+		<script type="module">	
+			console.clear();
+
+			//Old buttons
+			/*
+					<div  style="position:absolute;right:52%;top:85%">
 			<input type = "button" id="startId" 
 			value = "Stop" /> 
 		</div>
@@ -52,27 +73,7 @@
 			value = "Stage 7" class="btn btn-secondary" /> 
 		</div>
 		  </div>
-
-
-		<div class="btn-group fixed-bottom"  role="group" aria-label="Basic example">
-			<button type="button" class="btn btn-secondary">Left</button>
-			<button type="button" class="btn btn-secondary">Middle</button>
-			<button type="button" class="btn btn-secondary">Right</button>
-		  </div>
-
-
-		<link rel="stylesheet" href="css/bootstrap.css">
-
-		<script src="js/jquery-3.4.1.min.js"></script>
-		<script src="js/bootstrap.min.js"></script>
-
-		<script src="https://d3js.org/d3.v5.js" charset="utf-8">//loading parser</script>
-
-		<script type="module">	
-			console.clear();
-
-
-
+			*/
 
 			import * as THREE from '/build/three.module.js';
 			//import * as d3 from '/build/3d.v5.js';
@@ -86,47 +87,60 @@
 			//CSV reader
 			/*
 
-			<div  style="position:absolute;right:82%;top:12%">
-			<input type = "text" id="speedId"  maxlength="4" size="4"
-			value = "Speed" /> 
-		</div>
+				<div  style="position:absolute;right:82%;top:12%">
+				<input type = "text" id="speedId"  maxlength="4" size="4"
+				value = "Speed" /> 
+				</div>
 
-		<div  style="position:absolute;right:80%;top:8%">
-			<input type = "button" id="dynamicId" 
-			value = "Dynamic" /> 
-		</div>
-
-
+				<div  style="position:absolute;right:80%;top:8%">
+				<input type = "button" id="dynamicId" 
+				value = "Dynamic" /> 
+				</div>
 
 
-			d3.csv("swing_normal.csv", function(error, data){
 
-				if (error){
-					console.log(error);
-				}
-				else{
-					console.log(data);
-					ds=data;
-				}
 
-			})
+				d3.csv("swing_normal.csv", function(error, data){
+
+					if (error){
+						console.log(error);
+					}
+					else{
+						console.log(data);
+						ds=data;
+					}
+
+				})
 			*/
 
 			
-			//Mobile Control
+			//Mobile Control V1
 			//document.getElementById("dynamicId").onclick = DynamicMode;
 
-			document.getElementById("S1").onclick = ChangeState1;
-			document.getElementById("S2").onclick = ChangeState2;
-			document.getElementById("S3").onclick = ChangeState3;
-			document.getElementById("S4").onclick = ChangeState4;
-			document.getElementById("S5").onclick = ChangeState5;
-			document.getElementById("S6").onclick = ChangeState6;
-			document.getElementById("S7").onclick = ChangeState7;
-			document.getElementById("startId").onclick = StopAnim;
-			document.getElementById("resetId").onclick = ResetAnim;
+			//document.getElementById("S1").onclick = ChangeState1;
+			//document.getElementById("S2").onclick = ChangeState2;
+			//document.getElementById("S3").onclick = ChangeState3;
+			//document.getElementById("S4").onclick = ChangeState4;
+			//document.getElementById("S5").onclick = ChangeState5;
+			//document.getElementById("S6").onclick = ChangeState6;
+			//document.getElementById("S7").onclick = ChangeState7;
+			//document.getElementById("startId").onclick = StopAnim;
+			//document.getElementById("resetId").onclick = ResetAnim;
 			//document.getElementById("speedId").onchange = ChangeSpeed;
 
+			//Mobile Control V2
+			document.getElementById("sizeID").onclick = ResizeBtn;
+
+			//document.getElementById("leftID").style.display = "none";
+			//document.getElementById("middleID").style.display = "none";
+			//document.getElementById("rightID").style.display = "none";
+			
+			document.getElementById("leftID").onclick = PreviousStage;
+			document.getElementById("middleID").onclick = PlayPause;
+			document.getElementById("rightID").onclick = NextStage;
+
+			//Counter for changing stages
+			var currentStage = 2; // Range: 1-7
 
 			var ScalingFactor = 1;
 			var CanvasHeight = window.innerHeight * ScalingFactor;
@@ -224,6 +238,9 @@
 			init();
 			animate();
 
+       
+
+
 			function init() {
 
 				var texture = new THREE.TextureLoader().load( "textures/Grass_1.jpg" );
@@ -251,8 +268,8 @@
 				*/
 
 				scene = new THREE.Scene();
-				scene.background = new THREE.Color( 0xa0a0a0 );
-				scene.fog = new THREE.Fog( 0xa0a0a0, 200, 1000 );
+				scene.background = new THREE.Color( 0xffffff );
+				//scene.fog = new THREE.Fog( 0xa0a0a0, 200, 1000 );
 
 				light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
 				light.position.set( 0, 200, 0 );
@@ -269,10 +286,10 @@
 
 
 				// ground
-				var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2000, 2000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
-				mesh.rotation.x = - Math.PI / 2;
-				mesh.receiveShadow = true;
-				scene.add( mesh );
+				//var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2000, 2000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
+				//mesh.rotation.x = - Math.PI / 2;
+				//mesh.receiveShadow = true;
+				//scene.add( mesh );
 
 				var grid = new THREE.GridHelper( 2000, 20, 0x000000, 0x000000 );
 				grid.material.opacity = 0.1;
@@ -341,7 +358,7 @@
 				controls.target.set( 0, 100, 0 );
 				controls.update();
 
-				window.addEventListener( 'resize', onWindowResize, true );
+				window.addEventListener( 'resize', onWindowResize, false );
 
 				// stats
 				//stats = new Stats();
@@ -373,6 +390,7 @@
 				*/
 
 				renderer.render( scene, camera );
+				window.addEventListener( 'resize', onWindowResize, false );
 				//stats.update();
 			}
 
@@ -386,6 +404,8 @@
 			camera.updateProjectionMatrix();
 
 			renderer.setSize( CanvasWidth, CanvasHeight );
+
+			
 
 			}
 			
@@ -589,14 +609,153 @@
 				
 			}
 
+			//Mobile Ver2 Control
+
+			function ResizeBtn(){
+				document.getElementById("middleID").style.display = "block";
+				var x = document.getElementById("buttonsID");
+				if (x.style.display === "none") {
+					x.style.display = "block";
+				} else {
+					x.style.display = "none";
+				}
+			}
+
+			function PlayPause(){
+				
+				if(clock.running) {
+					clock.stop();
+					window.addEventListener( 'resize', onWindowResize, false );
+				}
+				else {
+					clock.start();
+				}
+			}
+
+			function PreviousStage(){
+				currentStage  = currentStage - 1;
+				if (currentStage < 1) currentStage = 1;
+				else{
+					switch(currentStage){
+						case 1:
+							clock.stop();
+							mixer.time = 0;
+							mixer.update( 0.415 );
+							renderer.render( scene, camera );
+							requestAnimationFrame( animate );
+							clock.stop();
+							break;
+						case 2:
+							clock.stop();
+							mixer.time = 0;
+							mixer.update( 0.9462 );
+							renderer.render( scene, camera );
+							requestAnimationFrame( animate );
+							clock.stop();
+							break;
+						case 3:
+							clock.stop();
+							mixer.time = 0;
+							mixer.update( 1.2782 );
+							renderer.render( scene, camera );
+							requestAnimationFrame( animate );
+							clock.stop();
+							break;
+						case 4:
+							clock.stop();
+							mixer.time = 0;
+							mixer.update( 1.4608 );
+							renderer.render( scene, camera );
+							requestAnimationFrame( animate );
+							clock.stop();
+							break;
+						case 5:
+							clock.stop();
+							mixer.time = 0;
+							mixer.update( 1.494 );
+							renderer.render( scene, camera );
+							requestAnimationFrame( animate );
+							clock.stop();
+							break;
+						case 6:
+							clock.stop();
+							mixer.time = 0;
+							mixer.update( 1.7098 );
+							renderer.render( scene, camera );
+							requestAnimationFrame( animate );
+							clock.stop();
+							break;
+						case 7:
+							clock.stop();
+							mixer.time = 0;
+							mixer.update( 1.9256 );
+							renderer.render( scene, camera );
+							requestAnimationFrame( animate );
+							clock.stop();
+							break;
+					}
+
+				}
+				
+			}
+
+			function NextStage(currentStage){
+				currentStage  = currentStage + 1;
+				if (currentStage > 7) currentStage = 7;
+				else{
+					switch(currentStage){
+						case 1:
+							clock.stop();
+							mixer.time = 0;
+							mixer.update( 0.415 );
+							renderer.render( scene, camera );
+							requestAnimationFrame( animate );
+							clock.stop();
+							break;
+						case 2:
+							clock.startTime = 0;
+							clock.oldTime = 0;
+							clock.elapsedTime = 0;
+							break;
+						case 3:
+							clock.startTime = 0;
+							clock.oldTime = 0;
+							clock.elapsedTime = 0;
+							break;
+						case 4:
+							clock.startTime = 0;
+							clock.oldTime = 0;
+							clock.elapsedTime = 0;
+							break;
+						case 5:
+							clock.startTime = 0;
+							clock.oldTime = 0;
+							clock.elapsedTime = 0;
+							break;
+						case 6:
+							clock.startTime = 0;
+							clock.oldTime = 0;
+							clock.elapsedTime = 0;
+							break;
+						case 7:
+							clock.startTime = 0;
+							clock.oldTime = 0;
+							clock.elapsedTime = 0;
+							break;
+					}
+
+				}
+			}
+
 			//stops and resumes the THREE clock
+			/*
 			function StopAnim(){
 				clock.stop();
 			}
 			function ResetAnim(){
 				clock.start();
 			} 
-			
+			*/
 			</script>
 
 	</body>

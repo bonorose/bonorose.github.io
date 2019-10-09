@@ -12,72 +12,78 @@
 		<button type="button" class="btn btn-secondary" id="sizeID"> <img src="icons/white/expand-arrows-alt-solid.svg"	width="30" /> </button>
 		</div>
 
+		<div style="position:absolute;top:2%;left:2%" id="resizeID">
+			<button type="button" class="btn btn-secondary" id="dynamicID"> DYNAMIC </button>
+			</div>
+
 		<div class="btn-group fixed-bottom"  role="group" id="buttonsID">
 			<button type="button" class="btn btn-secondary" id="leftID"> <img src="icons/white/backward-solid.svg"	width="40" /> </button>
 			<button type="button" class="btn btn-secondary" id="middleID"> <img src="icons/white/play-circle-solid.svg"	width="40" /> </button>
 			<button type="button" class="btn btn-secondary" id="rightID"> <img src="icons/white/forward-solid.svg"	width="40" /> </button>	
 		</div>
 
-
 		<link rel="stylesheet" href="css/bootstrap.css">
 
+		
 		<script src="js/jquery-3.4.1.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 
-		<script src="https://d3js.org/d3.v5.js" charset="utf-8">//loading parser</script>
+		<script src="https://d3js.org/d3.v5.min.js" charset="utf-8">//loading parser</script>
 
 		<script type="module">	
 			console.clear();
 
 			//Old buttons
 			/*
-					<div  style="position:absolute;right:52%;top:85%">
-			<input type = "button" id="startId" 
-			value = "Stop" /> 
-		</div>
+						<div  style="position:absolute;right:52%;top:85%">
+				<input type = "button" id="startId" 
+				value = "Stop" /> 
+			</div>
 
-		<div  style="position:absolute;right:33%;top:85%">
-			<input type = "button" id="resetId" 
-			value = "Resume" /> 
-		</div>
+			<div  style="position:absolute;right:33%;top:85%">
+				<input type = "button" id="resetId" 
+				value = "Resume" /> 
+			</div>
 
 
-		<div class="btn-group" role="group" aria-label="Basic example">
-			
-		<div  style="position:absolute;right:82%;top:90%">
-			<input type = "button" id="S1" 
-			value = "Stage 1" class="btn btn-secondary" /> 
-		</div>
-		<div style="position:absolute;right:62%;top:90%">
-			<input type = "button" id="S2" 
-			value = "Stage 2" class="btn btn-secondary" /> 
-		</div>
-		<div style="position:absolute;right:42%;top:90%">
-			<input type = "button" id="S3" 
-			value = "Stage 3" class="btn btn-secondary" /> 
-		</div>
-		<div style="position:absolute;right:22%;top:90%">
-			<input type = "button" id="S4" 
-			value = "Stage 4" class="btn btn-secondary" /> 
-		</div>
-		<div id="S5" style="position:absolute;right:2%;top:90%">
-			<input type = "button" 
-			value = "Stage 5" class="btn btn-secondary" /> 
-		</div>
-		<div id="S6" style="position:absolute;right:52%;top:95%">
-			<input type = "button" 
-			value = "Stage 6" class="btn btn-secondary" /> 
-		</div>
-		<div id="S7" style="position:absolute;right:32%;top:95%">
-			<input type = "button" 
-			value = "Stage 7" class="btn btn-secondary" /> 
-		</div>
-		  </div>
+			<div class="btn-group" role="group" aria-label="Basic example">
+				
+			<div  style="position:absolute;right:82%;top:90%">
+				<input type = "button" id="S1" 
+				value = "Stage 1" class="btn btn-secondary" /> 
+			</div>
+			<div style="position:absolute;right:62%;top:90%">
+				<input type = "button" id="S2" 
+				value = "Stage 2" class="btn btn-secondary" /> 
+			</div>
+			<div style="position:absolute;right:42%;top:90%">
+				<input type = "button" id="S3" 
+				value = "Stage 3" class="btn btn-secondary" /> 
+			</div>
+			<div style="position:absolute;right:22%;top:90%">
+				<input type = "button" id="S4" 
+				value = "Stage 4" class="btn btn-secondary" /> 
+			</div>
+			<div id="S5" style="position:absolute;right:2%;top:90%">
+				<input type = "button" 
+				value = "Stage 5" class="btn btn-secondary" /> 
+			</div>
+			<div id="S6" style="position:absolute;right:52%;top:95%">
+				<input type = "button" 
+				value = "Stage 6" class="btn btn-secondary" /> 
+			</div>
+			<div id="S7" style="position:absolute;right:32%;top:95%">
+				<input type = "button" 
+				value = "Stage 7" class="btn btn-secondary" /> 
+			</div>
+			</div>
 			*/
 
 			import * as THREE from '/build/three.module.js';
-			//import * as d3 from '/build/3d.v5.js';
+			//import { d3 } from '/build/3d.v5.js';
 			//import {GUI} from '/jsm/libs/dat.gui.module.js';
+
+			//import { geoInterpolate } from 'd3-geo';
 
 			//import Stats from '/jsm/libs/stats.module.js';
 			import { OrbitControls } from '/jsm/controls/OrbitControls.js';
@@ -128,29 +134,40 @@
 			//document.getElementById("resetId").onclick = ResetAnim;
 			//document.getElementById("speedId").onchange = ChangeSpeed;
 
-			//Mobile Control V2
+			// Mobile Control V2
 			document.getElementById("sizeID").onclick = ResizeBtn;
-
+			
+			// Setting hidden on load
 			document.getElementById("buttonsID").style.visibility = "hidden";
+			document.getElementById("dynamicID").style.visibility = "hidden";
 			
-			
+			// Onclick action
 			document.getElementById("leftID").onclick = PreviousStage;
 			document.getElementById("middleID").onclick = PlayPause;
 			document.getElementById("rightID").onclick = NextStage;
+			document.getElementById("dynamicID").onclick = DynamicMode;
 
-			//Counter for changing stages
+			// Counter for changing stages
 			var currentStage = 2; // Range: 1-7
 			var vischeck = false;
+			
+			// Dynamic control - keypress and range of animation
+			var dynamicCheck = false;
+			var waitingForEnter = false;
+			var nEnd = 0, nMax, nStep = 1174;
 
+			// Canvas settings and scaling factor
 			var ScalingFactor = 1;
 			var CanvasHeight = window.innerHeight * ScalingFactor;
 			var CanvasWidth = window.innerWidth * ScalingFactor;
 
-			
+			// Declaring variables in use for init()
 			var container, stats, controls;
 			var camera, scene, renderer, light;
 			var cameraO, cameraF, cameraS;
-
+			var mesh;
+			
+			// Three.js worldclock and delta time.
 			var clock = new THREE.Clock();
 			var delta;
 			var stageNum = 0;
@@ -163,13 +180,21 @@
 			var animtimer = 1;
 
 			// This is in seconds.
-			var animframe;
+			//var animframe;
 			
-
+			// Animation sequence holder
 			var mixer;
 
-			/*{
-			// GUI
+			// Dynamic Variables
+			var number=[]; 
+			var phase=[];
+			var pointX=[]; 
+			var pointY=[]; 
+			var pointZ=[];
+			
+
+			
+			/* GUI
 			var gui = new GUI();
 
 			var object1 = {
@@ -230,16 +255,14 @@
 			folder2.add(object3, 'UpdateAnimation'); 
 
 			folder2.close();
-
 			*/
 
 
 
-			init();
-			animate();
+			init(); 	// Initialize scene, loaders and models
+			animate(); 	// Perform animation sequence
 
-       
-
+			if (dynamicCheck) animate();
 
 			function init() {
 
@@ -268,6 +291,7 @@
 				*/
 
 				scene = new THREE.Scene();
+				scene.background = new THREE.Color( 0x000000 );
 				//scene.background = new THREE.Color( 0x191D28 ); //linear gradient 191d28
 				//scene.fog = new THREE.Fog( 0xa0a0a0, 200, 1000 );
 
@@ -306,7 +330,7 @@
 
 				// model
 				var loader = new FBXLoader();
-				loader.load( 'models/golfer17.fbx', function ( object ) {
+				loader.load( 'models/fbx/golfer.fbx', function ( object ) {
 					
 					mixer = new THREE.AnimationMixer( object );
 					//default speed of animation
@@ -333,7 +357,7 @@
 
 				} );
 
-				loader.load('models/GrassPatch1.fbx', function ( object )  {
+				loader.load('models/fbx/grass.fbx', function ( object )  {
 					
 
 					object.traverse( function ( child ) {
@@ -357,8 +381,10 @@
 				} );
 
 				renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true  } );
+				//renderer.setClearColor( 0xffffff, 0 ); // the default
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( CanvasWidth, CanvasHeight );
+				renderer.toneMapping = THREE.LinearToneMapping;
 				renderer.gammaFactor = 2.2;
 				renderer.gammaOutput = true;
 				renderer.shadowMap.enabled = false;
@@ -376,10 +402,6 @@
 				// stats
 				//stats = new Stats();
 				//container.appendChild( stats.dom );
-
-			}
-
-			function initDynamic(){
 
 			}
 
@@ -407,17 +429,14 @@
 				//stats.update();
 			}
 
-			function SensorDraw(){
-
-			}
-
 			function onWindowResize() {
-
-			camera.aspect = CanvasWidth / CanvasHeight;
+			
+			let width = window.innerWidth;
+			let height = window.innerHeight;
+			  
+			camera.aspect = width/ height;
+			renderer.setSize( width, height );
 			camera.updateProjectionMatrix();
-
-			renderer.setSize( CanvasWidth, CanvasHeight );
-
 			
 
 			}
@@ -497,7 +516,7 @@
 						break;
 				}
 			}
-			*/
+			
 			
 			function ChangeState1() {
 
@@ -579,7 +598,7 @@
 				requestAnimationFrame( animate );
 				clock.stop();
 			}
-
+			
 			function ChangeSpeed(){
 				requestAnimationFrame( animate );
 				//mixer.timeScale = object3.AnimationSpeed;
@@ -587,12 +606,14 @@
 				renderer.render( scene, camera );
 				stats.update();
 			}
-
+*/
 			function DynamicMode(){
+
+				
 
 				var geometry = new THREE.BoxGeometry(200,200,1);
 				var material = new THREE.MeshPhongMaterial({
-					color: 0xff0000,
+					color: 0x0000ff,
 					opacity: 0.2,
 					transparent: true,
 					});
@@ -601,25 +622,190 @@
 				plane.position.z = 15;
 				plane.position.y = 100;
 				plane.rotation.x = -10;
-				//plane.rotation.y = 70;
 
 				scene.add( plane );
-				animate();
 
-				/*
-				d3.csv("sensors/swing_normal.csv", function(d) {
-					return {
-						Sequence : d.Sequence,
-						SwingPhase : +d.SwingPhase,
-						StickGlovePlane_X : +d.StickGlovePlane_X,
-						StickGlovePlane_Y : +d.StickGlovePlane_Y,
-						StickGlovePlane_Z : +d.StickGlovePlane_Z
-					};
-				}).then(function(data) {
-					console.log(data[0]);
-				});
-				*/
+				if(dynamicCheck == true){
+					// If clicked before, unload models and go back.
+
+					scene.remove( plane );
+					//scene.remove ( selectedObject );
+					plane.geometry.dispose();
+					plane.material.dispose();
+					plane = undefined;
+
+					console.log("Am I working?");
+					dynamicCheck = false;
+					//scene.remove( swing );
+					return;
+				}
+
+				JSONparser();
+				Normalize();
+				var points = [];
 				
+				/*
+
+   				for ( var i = 0; i < 18; i ++ ) {
+
+					points.push( new THREE.Vector3( Math.cos( i * Math.PI / 2 ),
+					 i / 9 - 1, Math.sin( i * Math.PI / 2 ) ).multiplyScalar( 3 ) );
+
+				}
+				
+				
+				for ( var i = 0; i < 1174; i ++ ) {
+
+					points.push( new THREE.Vector3( pointX[i],
+					pointY[i], pointZ[i]));
+				}
+
+				var path = new THREE.CatmullRomCurve3( points );
+
+				
+
+				 // params
+				var pathSegments = 2048;
+				var tubeRadius = 0.2;
+				var radiusSegments = 16;
+				var closed = true;
+
+				// geometry
+				var geometry = new THREE.TubeGeometry( path, pathSegments, tubeRadius, radiusSegments, closed );
+
+				// to buffer goemetry
+				geometry = new THREE.BufferGeometry().fromGeometry( geometry );
+				nMax = geometry.attributes.position.count;
+
+				// material
+				var material = new THREE.MeshPhongMaterial( {
+					color: 0x00ffff,
+					side: THREE.DoubleSide
+				} );
+
+				// mesh
+				mesh = new THREE.Mesh( geometry, material );
+				mesh.scale.set (10, 10, 10);
+				scene.add( mesh );
+
+				*/
+				/*
+				const start = [
+					pointX[0],
+					pointY[0],
+					pointZ[0]
+				];
+
+				const mid1 = [
+					pointX[654],
+					pointY[654],
+					pointZ[654]
+				];
+
+				const mid2 = [
+					pointX[847],
+					pointY[847],
+					pointZ[874]
+				];
+
+				const end = [
+					pointX[1174],
+					pointY[1174],
+					pointZ[1174]
+				];
+				*/
+
+				var start = new THREE.Vector3(pointX[0],
+					pointY[0],
+					pointZ[0]);
+				
+				var mid1 = new THREE.Vector3(pointX[654],
+					pointY[654],
+					pointZ[654]);
+
+				var mid2 = new THREE.Vector3(pointX[847],
+					pointY[847],
+					pointZ[874]);
+
+				var end = new THREE.Vector3(pointX[1174],
+					pointY[1174],
+					pointZ[1174]);
+
+				var curve = new THREE.CubicBezierCurve3(start, mid1, mid2, end);
+				var g = new THREE.TubeGeometry(curve, 100, 0.35, 10, false);
+				var m = new THREE.MeshBasicMaterial({
+				color: new THREE.Color(
+					"hsl(" + Math.floor(Math.random() * 360) + ",50%,50%)"
+				)
+				});
+				var curveObject = new THREE.Mesh(g, m);
+				scene.add(curveObject);
+
+
+						// Flag dynamic turned on.
+						dynamicCheck = true;
+					}
+
+			function DynamicDraw(){
+				
+			requestAnimationFrame( animate );
+
+			nEnd = ( nEnd + nStep ) % nMax;
+
+			mesh.geometry.setDrawRange( 0, nEnd );
+
+			// Animation pause  when complete
+			//if(nEnd) return;
+
+			renderer.render( scene, camera );
+
+			}
+
+			// Must add variable for csv name.
+			// Also must talk if csv or json is final format.
+
+			function JSONparser(){
+
+				/* Tester
+				d3.csv("swing_normal2.csv").then(function(error,data) {
+					console.log("Parser running.");
+					console.log("Starting read sequence.")
+				});	
+				*/
+
+				//V2
+				
+				d3.csv("swing_normal2.csv", function(d) {
+					return {
+						number: d.number,
+						phase: d.phase,
+						pointX: d.pointX,
+						pointY: d.pointY,
+						pointZ: d.pointZ
+					};
+				}).then(function(data){
+					for(var i=0;i<1173;i++){
+						number[i] = data[i].number;
+						phase[i] = data[i].phase;
+						pointX[i] = data[i].pointX;
+						pointY[i] = data[i].pointY;
+						pointZ[i] = data[i].pointZ;
+					}
+				});
+				
+				return pointX,pointY,pointZ;
+				
+			}
+			
+			// Normalizing the numbers to better show the graphic.
+
+			function Normalize(){
+				var normalizeScale = 10;
+				for(var i=0; i<1174; i++){
+					pointX[i]=pointX[i] * ( normalizeScale );
+					pointY[i]=pointY[i] * ( normalizeScale );
+					pointZ[i]=pointZ[i] * ( normalizeScale );
+				}
 			}
 
 			//Mobile Ver2 Control
@@ -627,13 +813,16 @@
 			function ResizeBtn(){
 				//document.getElementById("middleID").style.display = "block";
 				var x = document.getElementById("buttonsID");
+				var y = document.getElementById("dynamicID");
 				
 				if (vischeck) {
 					x.style.visibility = "hidden";
+					y.style.visibility = "hidden";
 					vischeck = false;
 				} 
 				else{
 					x.style.visibility = "visible";
+					y.style.visibility = "visible";
 					vischeck = true;	
 				}
 

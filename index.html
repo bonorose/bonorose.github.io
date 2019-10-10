@@ -262,7 +262,7 @@
 			init(); 	// Initialize scene, loaders and models
 			animate(); 	// Perform animation sequence
 
-			if (dynamicCheck) animate();
+			//if (dynamicCheck) animate();
 
 			function init() {
 
@@ -609,9 +609,8 @@
 */
 			function DynamicMode(){
 
-				
-
-				var geometry = new THREE.BoxGeometry(200,200,1);
+				//var geometry = new THREE.BoxGeometry(200,200,1);
+				var geometry = new THREE.TorusGeometry( 50, 5, 8, 100 );
 				var material = new THREE.MeshPhongMaterial({
 					color: 0x0000ff,
 					opacity: 0.2,
@@ -640,12 +639,11 @@
 					return;
 				}
 
-				JSONparser();
+				CSVparser();
 				Normalize();
-				var points = [];
+				//var points = [];
 				
 				/*
-
    				for ( var i = 0; i < 18; i ++ ) {
 
 					points.push( new THREE.Vector3( Math.cos( i * Math.PI / 2 ),
@@ -688,8 +686,8 @@
 				mesh.scale.set (10, 10, 10);
 				scene.add( mesh );
 
-				*/
-				/*
+				
+				
 				const start = [
 					pointX[0],
 					pointY[0],
@@ -713,7 +711,7 @@
 					pointY[1174],
 					pointZ[1174]
 				];
-				*/
+				
 
 				var start = new THREE.Vector3(pointX[0],
 					pointY[0],
@@ -740,11 +738,40 @@
 				});
 				var curveObject = new THREE.Mesh(g, m);
 				scene.add(curveObject);
+				*/
+				console.log(pointX[150]);
+
+				var geometry = new THREE.TorusGeometry( 50, 5, 8, 100 );
+				var material = new THREE.MeshPhongMaterial({
+					color: 0x0000ff,
+					opacity: 0.2,
+					transparent: true,
+					});
+
+				var plane = new THREE.Mesh( geometry, material);
+
+
+
+				
+				var g = new THREE.TorusGeometry( 50, 5, 8, 100 );
+				var m = new THREE.MeshPhongMaterial({
+					color: 0xff0000,
+					opacity: 0.4,
+					transparent: true,
+					});
+				var curveObject = new THREE.Mesh(g, m);
+				curveObject.position.z = 15;
+				curveObject.position.y = 100;
+				curveObject.rotation.x = -10 + ( -0.006954575 );
+				curveObject.rotation.y = -0.074132506;
+				curveObject.rotation.z =-0.058298081;
+
+				scene.add(curveObject);
 
 
 						// Flag dynamic turned on.
 						dynamicCheck = true;
-					}
+				}
 
 			function DynamicDraw(){
 				
@@ -762,9 +789,12 @@
 			}
 
 			// Must add variable for csv name.
-			// Also must talk if csv or json is final format.
+			// CSV Parsing function
 
-			function JSONparser(){
+			//@brief CSV Handler function. 
+			//@input string, File Location.
+			//@output return point data.
+			function CSVparser(){
 
 				/* Tester
 				d3.csv("swing_normal2.csv").then(function(error,data) {
@@ -794,8 +824,44 @@
 				});
 				
 				return pointX,pointY,pointZ;
+			}
+
+			
+
+			//JSON Parsing function
+			//Need to finish implementing
+			/*function JSONparser(){
+
+				/* Tester
+				d3.csv("swing_normal2.csv").then(function(error,data) {
+					console.log("Parser running.");
+					console.log("Starting read sequence.")
+				});	
+				
+				//V2
+				
+				d3.csv("swing_normal2.csv", function(d) {
+					return {
+						number: d.number,
+						phase: d.phase,
+						pointX: d.pointX,
+						pointY: d.pointY,
+						pointZ: d.pointZ
+					};
+				}).then(function(data){
+					for(var i=0;i<1173;i++){
+						number[i] = data[i].number;
+						phase[i] = data[i].phase;
+						pointX[i] = data[i].pointX;
+						pointY[i] = data[i].pointY;
+						pointZ[i] = data[i].pointZ;
+					}
+				});
+				
+				return pointX,pointY,pointZ;
 				
 			}
+			*/
 			
 			// Normalizing the numbers to better show the graphic.
 

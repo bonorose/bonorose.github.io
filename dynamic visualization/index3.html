@@ -1,0 +1,136 @@
+<html>
+	<head>
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+	</head>
+	<body>
+        <script src="/build/three.js"></script>
+        
+		<script>
+            
+            var scaler =1;
+
+            var originPoint = [0, 0, 0];
+            var originPoint2 = new THREE.Vector3( 0, 0, 0 );
+            var normalSwing = new THREE.Vector3(  0.073542297, 0.783926419, 0.616482684 );
+
+
+           
+			var scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xffffff);
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			//var geometry = new THREE.TorusGeometry( 1.5, 0.1, 16, 8, 8 );
+            //var material = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.DoubleSide } );
+            //var mesh = new THREE.Mesh( geometry, material );
+            //mesh.rotation.x = 4.7;
+            //mesh.rotation.y = 1.6;
+            //scene.add( mesh );
+			camera.position.z = 8;
+            camera.rotation.z = 0;
+            camera.rotation.x = 0;
+            camera.rotation.y = 0.5;
+            camera.position.x = 2.5;
+            camera.position.y = 0;
+            camera.position.z = 4;
+            camera.rotation.y = 3/4;
+            camera.position.x = 4;
+
+
+            //var geometry = new THREE.TorusGeometry( 1.5, 0.1, 16, 32, 7 );
+            //var material = new THREE.MeshBasicMaterial( { color: 0xff0000, side: THREE.DoubleSide } );
+            //var mesh = new THREE.Mesh( geometry, material );
+            //mesh.rotation.x = 0.073542297 * scaler;
+            //mesh.rotation.y = 0.783926419 * scaler;
+           // mesh.rotation.z = 0.616482684 * scaler;
+            //scene.add( mesh );
+
+
+            var dir = new THREE.Vector3(1,0,0);
+            var centroid = normalSwing;
+            var plane = new THREE.Plane();
+            plane.setFromNormalAndCoplanarPoint(dir, centroid).normalize();
+
+            // Create a basic rectangle geometry
+            var planeGeometry = new THREE.PlaneGeometry(2, 2);
+
+            // Align the geometry to the plane
+            var coplanarPoint = plane.coplanarPoint();
+            var focalPoint = new THREE.Vector3().copy(coplanarPoint).add(plane.normal);
+            planeGeometry.lookAt(focalPoint);
+            planeGeometry.translate(coplanarPoint.x, coplanarPoint.y, coplanarPoint.z);
+
+            // Create mesh with the geometry
+            var planeMaterial = new THREE.MeshBasicMaterial({color: 0xffff00, side: THREE.DoubleSide});
+            var dispPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+            scene.add(dispPlane);
+
+            var dir = new THREE.Vector3(0,1,0);
+            var centroid = normalSwing;
+            var plane = new THREE.Plane();
+            plane.setFromNormalAndCoplanarPoint(dir, centroid).normalize();
+
+            // Create a basic rectangle geometry
+            var planeGeometry = new THREE.PlaneGeometry(2, 2);
+
+            // Align the geometry to the plane
+            var coplanarPoint = plane.coplanarPoint();
+            var focalPoint = new THREE.Vector3().copy(coplanarPoint).add(plane.normal);
+            planeGeometry.lookAt(focalPoint);
+            planeGeometry.translate(coplanarPoint.x, coplanarPoint.y, coplanarPoint.z);
+
+            // Create mesh with the geometry
+            var planeMaterial = new THREE.MeshBasicMaterial({color: 0x0000ff, side: THREE.DoubleSide});
+            var dispPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+            scene.add(dispPlane);
+
+            var dir = new THREE.Vector3(0,0,1);
+            var centroid = normalSwing;
+            var plane = new THREE.Plane();
+            plane.setFromNormalAndCoplanarPoint(dir, centroid).normalize();
+
+            // Create a basic rectangle geometry
+            var planeGeometry = new THREE.PlaneGeometry(2, 2);
+
+            // Align the geometry to the plane
+            var coplanarPoint = plane.coplanarPoint();
+            var focalPoint = new THREE.Vector3().copy(coplanarPoint).add(plane.normal);
+            planeGeometry.lookAt(focalPoint);
+            planeGeometry.translate(coplanarPoint.x, coplanarPoint.y, coplanarPoint.z);
+
+            // Create mesh with the geometry
+            var planeMaterial = new THREE.MeshBasicMaterial({color: 0xff00ff, side: THREE.DoubleSide});
+            var dispPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+            scene.add(dispPlane);
+
+            sphere();
+
+        
+
+			var animate = function () {
+				requestAnimationFrame( animate );
+
+
+				renderer.render( scene, camera );
+			};
+
+          
+			animate();
+
+            function sphere(){
+                var geometry = new THREE.SphereGeometry( 0.2, 32, 32 );
+                var material = new THREE.MeshBasicMaterial( {color: 0x0000ff} );
+                var sphere = new THREE.Mesh( geometry, material );
+                scene.add( sphere );
+            }
+
+		</script>
+	</body>
+</html>

@@ -624,24 +624,104 @@
             //scene.add( helper );
 
             var plane = new THREE.Plane(originPoint2);
-            plane.setFromNormalAndCoplanarPoint( flatSwing, originPoint2 ).normalize();
+			plane.setFromNormalAndCoplanarPoint( flatSwing, originPoint2 ).normalize();
+			
+
+
+			// Create a basic rectangle geometry
+			var planeGeometry = new THREE.PlaneGeometry(100, 100);
+
+			// Align the geometry to the plane
+			var coplanarPoint = plane.coplanarPoint();
+			var focalPoint = new THREE.Vector3().copy(coplanarPoint).add(plane.normal);
+			planeGeometry.lookAt(focalPoint);
+			planeGeometry.translate(coplanarPoint.x, coplanarPoint.y, coplanarPoint.z);
+
+			// Create mesh with the geometry
+			var planeMaterial = new THREE.MeshLambertMaterial({color: 0xffff00, side: THREE.DoubleSide});
+			var dispPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+			dispPlane.rotation.y = -1/2;
+			dispPlane.rotation.x = 1;
+			dispPlane.position.z = 22;
+			dispPlane.position.y = 10;
+			dispPlane.scale.set(1.5, 1.5, 1.5 );
+			scene.add(dispPlane);
+
+			//////////////////
+
+			var plane = new THREE.Plane(originPoint2);
+			plane.setFromNormalAndCoplanarPoint( flatSwing2, originPoint2 ).normalize();
+			
+
+
+			// Create a basic rectangle geometry
+			var planeGeometry = new THREE.PlaneGeometry(100, 100);
+
+			// Align the geometry to the plane
+			var coplanarPoint = plane.coplanarPoint();
+			var focalPoint = new THREE.Vector3().copy(coplanarPoint).add(plane.normal);
+			planeGeometry.lookAt(focalPoint);
+			planeGeometry.translate(coplanarPoint.x, coplanarPoint.y, coplanarPoint.z);
+
+			// Create mesh with the geometry
+			var planeMaterial = new THREE.MeshLambertMaterial({color: 0x00ffff, side: THREE.DoubleSide});
+			var dispPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+			dispPlane.rotation.y = -1/2;
+			dispPlane.rotation.x = 1;
+			dispPlane.position.z = 22;
+			dispPlane.position.y = 10;
+			dispPlane.scale.set(1.5, 1.5, 1.5 );
+			scene.add(dispPlane);
+
+			///////////
+
+			var plane = new THREE.Plane(originPoint2);
+			plane.setFromNormalAndCoplanarPoint( uprightSwing, originPoint2 ).normalize();
+			
+
+
+			// Create a basic rectangle geometry
+			var planeGeometry = new THREE.PlaneGeometry(100, 100);
+
+			// Align the geometry to the plane
+			var coplanarPoint = plane.coplanarPoint();
+			var focalPoint = new THREE.Vector3().copy(coplanarPoint).add(plane.normal);
+			planeGeometry.lookAt(focalPoint);
+			planeGeometry.translate(coplanarPoint.x, coplanarPoint.y, coplanarPoint.z);
+
+			// Create mesh with the geometry
+			var planeMaterial = new THREE.MeshLambertMaterial({color: 0xff0000, side: THREE.DoubleSide});
+			var dispPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+			dispPlane.rotation.y = -1/2;
+			dispPlane.rotation.x = 1;
+			dispPlane.position.z = 22;
+			dispPlane.position.y = 10;
+			dispPlane.scale.set(1.5, 1.5, 1.5 );
+			scene.add(dispPlane);
+
+
+
+
+
+
+
+
+
+
 			
             
             var helper = new THREE.PlaneHelper( plane, 1, 0x00ffff );
 			helper.size = 100;
+			helper.rotation.z = 10;
 			//helper.position.y = 10;
             scene.add( helper );
 
-			var planeGeo = new THREE.Geometry();
-			planeGeo.vertices.push( flatSwing );
-			planeGeo.faces.push( new THREE.Face3( 0, 1, 2 ) );
-			planeGeo.computeBoundingSphere();
 
-			var geometry = new THREE.PlaneGeometry( 10, 10, 1 );
-			var material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
-			var plane = new THREE.Mesh( planeGeo, material );
-			plane.scale.set(10,10,10);
-			scene.add( plane );
+
+
 
             //var plane = new THREE.Plane();
             //plane.setFromNormalAndCoplanarPoint( uprightSwing, originPoint2 ).normalize();

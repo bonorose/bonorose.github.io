@@ -406,6 +406,60 @@
 
 			}
 
+			function DynamicMode(){
+
+			var axesHelper = new THREE.AxesHelper( 100 );
+			axesHelper.position.y = 200;
+			scene.add( axesHelper );	
+
+			var originPoint2 = new THREE.Vector3( 0, 0, 0 );
+            var normalSwing = new THREE.Vector3(  0.073542297, 0.783926419, 0.616482684 );
+            var flatSwing = new THREE.Vector3( -0.17548316, -0.958298127, 0.225544585 );
+            var uprightSwing = new THREE.Vector3( 0.067843485, -0.988041828, 0.138457966 );
+            var flatSwing2 = new THREE.Vector3( -0.1809266, -0.937890495, 0.296018556 );
+
+
+
+			DrawPlane( flatSwing, originPoint2);
+			PlaneDeviation( flatSwing, originPoint2);
+
+
+
+
+
+            //var plane = new THREE.Plane();
+            //plane.setFromNormalAndCoplanarPoint( uprightSwing, originPoint2 ).normalize();
+            //var helper = new THREE.PlaneHelper( plane, 1, 0xff00ff );
+            //scene.add( helper );
+
+	
+				/*
+				if(dynamicCheck == true){
+					// If clicked before, unload models and go back.
+
+					scene.remove( plane );
+					//scene.remove ( selectedObject );
+					plane.geometry.dispose();
+					plane.material.dispose();
+					plane = undefined;
+
+					console.log("Am I working?");
+					dynamicCheck = false;
+					//scene.remove( swing );
+					return;
+				}
+
+				*/
+
+				CSVparser();
+				//Normalize();
+				
+
+
+						// Flag dynamic turned on.
+						dynamicCheck = true;
+			}
+
 			function animate() {
 				requestAnimationFrame( animate );
 				delta = clock.getDelta();
@@ -442,260 +496,192 @@
 
 			}
 			
-			/*
-			function StageSelect(){
+			function DrawPlane(planeNormal, origin){
+			var plane = new THREE.Plane(origin);
+			plane.setFromNormalAndCoplanarPoint( planeNormal, origin ).normalize();
 
-				switch(object2.Stage){
-					case 'S1' :
-						//mixer.time = 0.415;
-						clock.stop();
-						mixer.time = 0;
-						clock.start();
-						mixer.update( 0.415 );
-						renderer.render( scene, camera );
-						stats.update();
-						requestAnimationFrame( animate );
-						clock.stop();
-						break;
-					case 'S2':
-						//mixer.time = 0.9462;
-						clock.stop();
-						clock.start();
-						mixer.update( 0.9462 );
-						renderer.render( scene, camera );
-						stats.update();
-						requestAnimationFrame( animate );
-						clock.stop();
-						break;
-					case 'S3':
-						mixer.setTime = 1.2782;
-						renderer.render( scene, camera );
-						stats.update();
-						requestAnimationFrame( animate );
-						clock.stop();
-						break;
-					case 'S4':
-						mixer.setTime = 1.4608;
-						renderer.render( scene, camera );
-						stats.update();
-						requestAnimationFrame( animate );
-						clock.stop();
-						break;
-					case 'S5':
-						mixer.setTime = 1.494;
-						renderer.render( scene, camera );
-						stats.update();
-						requestAnimationFrame( animate );
-						clock.stop();
-						break;
-					case 'S6':
-						//mixer.setTime = 0;
-						//mixer.update( 1.7098 );
-						var timeInSeconds = 1.7098;
-						function seekAnimationTime(mixer, timeInSeconds){
-							mixer.time=0;
-							for(var i=0;i<mixer._actions.length;i++){
-								mixer._actions[i].time=0;
-								}
-							mixer.update(timeInSeconds)
-						}
-						renderer.render( scene, camera );
-						stats.update();
-						requestAnimationFrame( animate );
-						clock.stop();
-						break;
-					case 'S7':
-						//mixer.setTime = 0;
-						//mixer.update( 1.9256 );
-						clock.stop();
-						clock.start();
-						mixer.update( 1.9256 );
-						renderer.render( scene, camera );
-						stats.update();
-						requestAnimationFrame( animate );
-						clock.stop();
-						break;
-				}
+			//Adjusting Math.Pi changes the segment displayed.
+			var planeGeometry = new THREE.RingGeometry(40, 50, 10, 1, 0, Math.PI / 4);
+
+			// Align the geometry to the plane
+			var coplanarPoint = plane.coplanarPoint();
+			var focalPoint = new THREE.Vector3().copy(coplanarPoint).add(plane.normal);
+			planeGeometry.lookAt(focalPoint);
+			planeGeometry.translate(coplanarPoint.x, coplanarPoint.y, coplanarPoint.z);
+
+			// Create mesh with the geometry
+			var planeMaterial = new THREE.MeshLambertMaterial({color: 0xff0000, side: THREE.DoubleSide});
+			var dispPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+			dispPlane.rotation.y = -1/2;
+			dispPlane.rotation.x = 1;
+			dispPlane.position.z = 12;
+			dispPlane.position.y = 5;
+			dispPlane.scale.set(1.5, 1.5, 1.5 );
+			dispPlane.position.y += 100;
+			scene.add(dispPlane);
+
+			//Adjusting Math.Pi changes the segment displayed.
+			var planeGeometry = new THREE.RingGeometry(40, 50, 10, 1, 0.8 , Math.PI / 1.5 );
+
+			// Align the geometry to the plane
+			var coplanarPoint = plane.coplanarPoint();
+			var focalPoint = new THREE.Vector3().copy(coplanarPoint).add(plane.normal);
+			planeGeometry.lookAt(focalPoint);
+			planeGeometry.translate(coplanarPoint.x, coplanarPoint.y, coplanarPoint.z);
+
+			// Create mesh with the geometry
+			var planeMaterial = new THREE.MeshLambertMaterial({color: 0x00ff00, side: THREE.DoubleSide});
+			var dispPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+			dispPlane.rotation.y = -1/2;
+			dispPlane.rotation.x = 1;
+			dispPlane.position.z = 12;
+			dispPlane.position.y = 5;
+			dispPlane.scale.set(1.5, 1.5, 1.5 );
+			dispPlane.position.y += 100;
+			scene.add(dispPlane);
+
+			//Adjusting Math.Pi changes the segment displayed.
+			var planeGeometry = new THREE.RingGeometry(40, 50, 10, 1, -0.05 , -Math.PI / 8 );
+
+			// Align the geometry to the plane
+			var coplanarPoint = plane.coplanarPoint();
+			var focalPoint = new THREE.Vector3().copy(coplanarPoint).add(plane.normal);
+			planeGeometry.lookAt(focalPoint);
+			planeGeometry.translate(coplanarPoint.x, coplanarPoint.y, coplanarPoint.z);
+
+			// Create mesh with the geometry
+			var planeMaterial = new THREE.MeshLambertMaterial({color: 0x00ffff, side: THREE.DoubleSide});
+			var dispPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+			dispPlane.rotation.y = -1/2;
+			dispPlane.rotation.x = 1;
+			dispPlane.position.z = 12;
+			dispPlane.position.y = 5;
+			dispPlane.scale.set(1.5, 1.5, 1.5 );
+			dispPlane.position.y += 100;
+			scene.add(dispPlane);
+
+			//Adjusting Math.Pi changes the segment displayed.
+			var planeGeometry = new THREE.RingGeometry(40, 50, 10, 1, -0.48 , -Math.PI / 4 );
+
+			// Align the geometry to the plane
+			var coplanarPoint = plane.coplanarPoint();
+			var focalPoint = new THREE.Vector3().copy(coplanarPoint).add(plane.normal);
+			planeGeometry.lookAt(focalPoint);
+			planeGeometry.translate(coplanarPoint.x, coplanarPoint.y, coplanarPoint.z);
+
+			// Create mesh with the geometry
+			var planeMaterial = new THREE.MeshLambertMaterial({color: 0xff00ff, side: THREE.DoubleSide});
+			var dispPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+			dispPlane.rotation.y = -1/2;
+			dispPlane.rotation.x = 1;
+			dispPlane.position.z = 12;
+			dispPlane.position.y = 5;
+			dispPlane.scale.set(1.5, 1.5, 1.5 );
+			dispPlane.position.y += 100;
+			scene.add(dispPlane);
+
+			
+			//Adjusting Math.Pi changes the segment displayed.
+			var planeGeometry = new THREE.RingGeometry(40, 50, 10, 1, -1.3 , -Math.PI / 4 );
+
+			// Align the geometry to the plane
+			var coplanarPoint = plane.coplanarPoint();
+			var focalPoint = new THREE.Vector3().copy(coplanarPoint).add(plane.normal);
+			planeGeometry.lookAt(focalPoint);
+			planeGeometry.translate(coplanarPoint.x, coplanarPoint.y, coplanarPoint.z);
+
+			// Create mesh with the geometry
+			var planeMaterial = new THREE.MeshLambertMaterial({color: 0x0f0f0f, side: THREE.DoubleSide});
+			var dispPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+			dispPlane.rotation.y = -1/2;
+			dispPlane.rotation.x = 1;
+			dispPlane.position.z = 12;
+			dispPlane.position.y = 5;
+			dispPlane.scale.set(1.5, 1.5, 1.5 );
+			dispPlane.position.y += 100;
+			scene.add(dispPlane);
+
+			
+			//Adjusting Math.Pi changes the segment displayed.
+			var planeGeometry = new THREE.RingGeometry(40, 50, 10, 1, -2.15 , -Math.PI / 16 );
+
+			// Align the geometry to the plane
+			var coplanarPoint = plane.coplanarPoint();
+			var focalPoint = new THREE.Vector3().copy(coplanarPoint).add(plane.normal);
+			planeGeometry.lookAt(focalPoint);
+			planeGeometry.translate(coplanarPoint.x, coplanarPoint.y, coplanarPoint.z);
+
+			// Create mesh with the geometry
+			var planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff, side: THREE.DoubleSide});
+			var dispPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+			dispPlane.rotation.y = -1/2;
+			dispPlane.rotation.x = 1;
+			dispPlane.position.z = 12;
+			dispPlane.position.y = 5;
+			dispPlane.scale.set(1.5, 1.5, 1.5 );
+			dispPlane.position.y += 100;
+			scene.add(dispPlane);
+		}
+
+			function PlaneDeviation(planeNormal, origin){
+
+			var holder = new THREE.Vector3();
+			//var texture = new THREE.TextureLoader().load( "checkered.png" );
+
+			var plane = new THREE.Plane(origin);
+			plane.setFromNormalAndCoplanarPoint( planeNormal, origin ).normalize();
+			
+
+
+			// Create a basic rectangle geometry
+			var planeGeometry = new THREE.PlaneGeometry(100, 100);
+
+			// Align the geometry to the plane
+			var coplanarPoint = plane.coplanarPoint();
+			var focalPoint = new THREE.Vector3().copy(coplanarPoint).add(plane.normal);
+			planeGeometry.lookAt(focalPoint);
+			planeGeometry.translate(coplanarPoint.x, coplanarPoint.y, coplanarPoint.z);
+
+			// Create mesh with the geometry
+			var planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff, side: THREE.DoubleSide});
+			var dispPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+			dispPlane.rotation.y = -1/2;
+			dispPlane.rotation.x = 1;
+			dispPlane.position.z = 12;
+			dispPlane.position.y = 5;
+			dispPlane.scale.set(1.5, 1.5, 1.5 );
+			dispPlane.position.y += 100;
+			//dispPlane.rotation.set(pointX[i],pointY[i],pointZ[i]);
+			dispPlane.rotation.set
+			(-0.000259318
+			,0.003776588
+			,-0.000529227);
+			
+			plane.projectPoint(origin,holder);
+			console.log(holder);
+
+
+			scene.add(dispPlane);
+
+			var geometry = new THREE.SphereGeometry( 5, 32, 32 );
+			var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+			var sphere = new THREE.Mesh( geometry, material );
+			sphere.position.x = sphere.position.x + holder[0]
+
+
+			sphere.scale.set(10,10,10);
+			scene.add( sphere );
+
+
 			}
 			
-			
-			function ChangeState1() {
-
-				
-				
-				//delta = clock.getDelta();
-
-				//delta = 0.415;
-				//mixer.update( delta );
-				mixer.time =0.415;
-				renderer.render( scene, camera );
-				stats.update();
-				requestAnimationFrame( animate );
-				clock.stop();
-			}
-
-			function ChangeState2() {
-				delta = clock.getDelta();
-
-				delta = 0.9462;
-				mixer.update( delta );
-				renderer.render( scene, camera );
-				stats.update();
-				requestAnimationFrame( animate );
-				clock.stop();
-			}
-
-			function ChangeState3() {
-				delta = clock.getDelta();
-
-				delta = 1.2782;
-				mixer.update( delta );
-				renderer.render( scene, camera );
-				stats.update();
-				requestAnimationFrame( animate );
-				clock.stop();
-			}
-
-			function ChangeState4() {
-				delta = clock.getDelta();
-
-				delta = 1.4608;
-				mixer.update( delta );
-				renderer.render( scene, camera );
-				stats.update();
-				requestAnimationFrame( animate );
-				clock.stop();
-			}
-
-			function ChangeState5() {
-				delta = clock.getDelta();
-
-				delta = 1.494;
-				mixer.update( delta );
-				renderer.render( scene, camera );
-				stats.update();
-				requestAnimationFrame( animate );
-				clock.stop();
-			}
-
-			function ChangeState6() {
-				delta = clock.getDelta();
-
-				delta = 1.7098;
-				mixer.update( delta );
-				renderer.render( scene, camera );
-				stats.update();
-				requestAnimationFrame( animate );
-				clock.stop();
-			}
-			
-			function ChangeState7() {
-				delta = clock.getDelta();
-
-				delta = 1.9256;
-				mixer.update( delta );
-				renderer.render( scene, camera );
-				stats.update();
-				requestAnimationFrame( animate );
-				clock.stop();
-			}
-			
-			function ChangeSpeed(){
-				requestAnimationFrame( animate );
-				//mixer.timeScale = object3.AnimationSpeed;
-				mixer.timeScale = document.getElementById("speedId").value;
-				renderer.render( scene, camera );
-				stats.update();
-			}
-*/
-			function DynamicMode(){
-
-			var axesHelper = new THREE.AxesHelper( 50 );
-			axesHelper.position.y = 100;
-			scene.add( axesHelper );	
-
-			var originPoint2 = new THREE.Vector3( 0, 0, 0 );
-            var normalSwing = new THREE.Vector3(  0.073542297, 0.783926419, 0.616482684 );
-            var flatSwing = new THREE.Vector3( -0.17548316, -0.958298127, 0.225544585 );
-            var uprightSwing = new THREE.Vector3( 0.067843485, -0.988041828, 0.138457966 );
-            var flatSwing2 = new THREE.Vector3( -0.1809266, -0.937890495, 0.296018556 );
-
-            //var plane = new THREE.Plane( new THREE.Vector3(  0.073542297, 0.783926419, 0.616482684 ), 0 );
-            //var helper = new THREE.PlaneHelper( plane, 1, 0xff0000 );
-            //scene.add( helper );
-
-            //var plane = new THREE.Plane();
-            //plane.setFromNormalAndCoplanarPoint( flatSwing2, originPoint2 ).normalize();
-            //var helper = new THREE.PlaneHelper( plane, 1, 0xffffff );
-            //scene.add( helper );
-
-            var plane = new THREE.Plane(originPoint2);
-            plane.setFromNormalAndCoplanarPoint( flatSwing, originPoint2 ).normalize();
-			
-            
-            var helper = new THREE.PlaneHelper( plane, 1, 0x00ffff );
-			helper.size = 100;
-			//helper.position.y = 10;
-            scene.add( helper );
-
-			var planeGeo = new THREE.Geometry();
-			planeGeo.vertices.push( flatSwing );
-			planeGeo.faces.push( new THREE.Face3( 0, 1, 2 ) );
-			planeGeo.computeBoundingSphere();
-
-			var geometry = new THREE.PlaneGeometry( 10, 10, 1 );
-			var material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
-			var plane = new THREE.Mesh( planeGeo, material );
-			plane.scale.set(10,10,10);
-			scene.add( plane );
-
-            //var plane = new THREE.Plane();
-            //plane.setFromNormalAndCoplanarPoint( uprightSwing, originPoint2 ).normalize();
-            //var helper = new THREE.PlaneHelper( plane, 1, 0xff00ff );
-            //scene.add( helper );
-
-	
-				/*
-				if(dynamicCheck == true){
-					// If clicked before, unload models and go back.
-
-					scene.remove( plane );
-					//scene.remove ( selectedObject );
-					plane.geometry.dispose();
-					plane.material.dispose();
-					plane = undefined;
-
-					console.log("Am I working?");
-					dynamicCheck = false;
-					//scene.remove( swing );
-					return;
-				}
-
-				*/
-
-				CSVparser();
-				//Normalize();
-				
-
-
-						// Flag dynamic turned on.
-						dynamicCheck = true;
-				}
-
-			function DynamicDraw(){
-				
-			requestAnimationFrame( animate );
-
-			nEnd = ( nEnd + nStep ) % nMax;
-
-			mesh.geometry.setDrawRange( 0, nEnd );
-
-			// Animation pause  when complete
-			//if(nEnd) return;
-
-			renderer.render( scene, camera );
-
-			}
 
 			// Must add variable for csv name.
 			// CSV Parsing function
@@ -732,7 +718,7 @@
 					}
 				});
 				
-				return pointX,pointY,pointZ;
+				return number, phase, pointX, pointY, pointZ;
 			}
 
 			

@@ -45,7 +45,7 @@
             <a class="nav-link js-scroll-trigger" href="#about">About</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#services">Blog</a>
+            <a class="nav-link js-scroll-trigger" href="#blog">Blog</a>
           </li>
           <li class="nav-item">
                 <a class="nav-link js-scroll-trigger" href="#subscribe">Subscribe</a>
@@ -54,7 +54,9 @@
             <a class="nav-link js-scroll-trigger" href="#contact">Contact</a>
           </li>
           <li class="nav-item">
-              <a class="nav-link js-scroll-trigger">Login</a>
+              <a class="nav-link js-scroll-trigger" href="#login">
+              Login
+              </a>
           </li>
           <li class="nav-item">
               <a class="nav-link js-scroll-trigger">Shopping</a>
@@ -93,14 +95,14 @@
           <h2 class="text-white mt-0">Who are we?</h2>
           <hr class="divider light my-4">
           <p class="text-white-50 mb-4">Insert text here for blog and music.</p>
-          <a class="btn btn-light btn-xl js-scroll-trigger" href="#services">Get Started!</a>
+          <a class="btn btn-light btn-xl js-scroll-trigger" href="#blog">Get Started!</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Services Section -->
-  <section class="page-section" id="services">
+  <!-- Services Section
+  <section class="page-section" id="blog">
     <div class="container">
       <h2 class="text-center mt-0">At Your Service</h2>
       <hr class="divider my-4">
@@ -136,6 +138,28 @@
       </div>
     </div>
   </section>
+  -->
+
+  <!-- Blog -->
+  <section class="page-section" id="blog">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-5 col-md-2 text-left">
+            <div class="mt-2">
+              <img src="img/portfolio/thumbnails/1.jpg">
+            </div>
+          </div>
+          <div class="col-lg-7 col-md-2 text-right">
+            <div class="mt-2">
+              <h3 class="h2 mb-2">Blog Article</h3>
+              <p class="text-muted mb-0">All dependencies are kept current to keep things fresh.</p>
+            </div>
+          </div>
+            
+        </div>
+      </div>
+    </section>
+
 
   <!-- Portfolio Section -->
   <section id="portfolio">
@@ -227,7 +251,7 @@
   <section class="page-section bg-dark text-white" id="subscribe">
     <div class="container text-center">
       <h2 class="mb-4">Subscribe to our service today!</h2>
-      <a class="btn btn-light btn-xl" href="https://startbootstrap.com/themes/creative/">Subscribe</a>
+      <a class="btn btn-light btn-xl" href="register.html">Subscribe</a>
     </div>
   </section>
 
@@ -279,11 +303,42 @@
     });
 </script>
 
+<!-- Login -->
+<section class="page-section bg-primary" id="login">
+<div class="container">
+    <div class="row">
+      <div class="col-sm-9 col-md-7 col-lg-7 mx-auto">
+        <div class="card card-signin my-5">
+          <div class="card-body">
+            <h5 class="card-title text-center">Sign In</h5>
+            <form class="form-signin">
+              <div class="form-label-group">
+                <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+                <label for="inputEmail">Email address</label>
+              </div>
+
+              <div class="form-label-group">
+                <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                <label for="inputPassword">Password</label>
+              </div>
+
+              <div class="custom-control custom-checkbox mb-3">
+                <input type="checkbox" class="custom-control-input" id="customCheck1">
+                <label class="custom-control-label" for="customCheck1">Remember password</label>
+              </div>
+              <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign in</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
   <!-- Footer -->
   <footer class="bg-light py-5">
     <div class="container">
-      <div class="small text-center text-muted">Copyright &copy; 2019 - World of Writers</div>
+      <div class="small text-center text-muted">Copyright &copy; 2019 - Simeon Marlokov</div>
     </div>
   </footer>
 

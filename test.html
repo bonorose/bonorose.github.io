@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Golf Assistant</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=yes, minimum-scale=1.0, maximum-scale=1.0">
+		<link type="text/css" rel="stylesheet" href="main.css">
+	</head>
+
+	<body>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r83/three.min.js"></script>
+
+		
+		<script src="js/jquery-3.4.1.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+
+		<script src="https://d3js.org/d3.v5.min.js" charset="utf-8">//loading parser</script>
+
+		<script type="module">
+
+        var camera, scene, renderer, geometry, material, mesh, curves = [];
+        var testPoint, curve, curveGeometry, curveMaterial, curveLine;
+
+        init();
+        animate();	
+			
+            /**
+ Create the scene, camera, renderer
+*/
+        function init() {
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 10000);
+        camera.position.z = 2000;
+        scene.add(camera);
+        addCurve();
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        }
+
+        /**
+        Add the initial bezier curve to the scene
+        */
+            function addCurve() {
+            testPoint = 0;
+            curve = new THREE.CubicBezierCurve3(
+                new THREE.Vector3( testPoint, 0, 0 ),
+                new THREE.Vector3( -50, 150, 0 ),
+                new THREE.Vector3( 0, 0, 0 ),
+                new THREE.Vector3( 150, 50, 0 )
+            );
+            curveGeometry = new THREE.Geometry();
+            curveGeometry.vertices = curve.getPoints( 50 );
+            curveMaterial = new THREE.LineBasicMaterial( { color : 0xff0000 } );
+            curveLine = new THREE.Line( curveGeometry, curveMaterial )
+            scene.add(curveLine);
+        
+            // EDITED
+            curves.push(curveLine); // Add curve to curves array
+            curveLine.curve = curve; // Link curve object to this curveLine
+            }
+
+            /**
+            On each frame render, remove the old line, create new curve, geometry and add the new line
+            */
+            function updateCurve() {
+            testPoint ++;
+            
+            // EDITED
+            for (var i = 0, l = curves.length; i < l; i++) {
+                var curveLine = curves[i];
+                
+                // Update x value of v0 vector
+                curveLine.curve.v0.x = testPoint;
+                // Update vertices
+                curveLine.geometry.vertices = curveLine.curve.getPoints( 50 ); 
+                // Let's three.js know that vertices are changed
+                curveLine.geometry.verticesNeedUpdate = true;
+            }
+            }
+
+            function animate() {
+            requestAnimationFrame(animate);
+            render();
+            }
+
+            function render() {
+            updateCurve();
+            renderer.render(scene, camera);
+            }
+
+			</script>
+
+	</body>
+</html>

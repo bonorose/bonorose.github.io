@@ -1,3 +1,17 @@
+
+element.style {
+}
+.carousel {
+    margin-bottom: 4rem;
+}
+
+.carousel {
+    position: relative;
+}
+*, ::after, ::before {
+    box-sizing: border-box;
+}
+
 .collapsible {
     background-color: #f4623a;
     color: white;

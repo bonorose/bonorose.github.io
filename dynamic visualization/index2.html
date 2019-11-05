@@ -656,7 +656,10 @@
 						dynamicCheck = true;
 			}
 
-
+			//@brief Draws a new reference plane with segments connected to the different stages
+			//of the golf shot.
+			//@param THREE.Vector3 - plane from normal vectors, THREE.Vector3 - point of origin
+			//@return
 			function DrawPlane(planeNormal, origin){
 			var plane = new THREE.Plane(origin);
 			plane.setFromNormalAndCoplanarPoint( planeNormal, origin ).normalize();
@@ -795,7 +798,8 @@
 
 
 			// Create a basic rectangle geometry
-			var planeGeometry = new THREE.PlaneGeometry(100, 100);
+			//Size that covers 180* of reference plane 2.27, -Math.PI
+			var planeGeometry = new THREE.RingGeometry(40, 50, 20, 1, 0, 0.1);
 
 			// Align the geometry to the plane
 			var coplanarPoint = plane.coplanarPoint();
@@ -829,11 +833,8 @@
 			var sphere = new THREE.Mesh( geometry, material );
 			sphere.position.x = sphere.position.x + holder[0]
 
-
 			sphere.scale.set(10,10,10);
 			scene.add( sphere );
-
-
 			}
 			
 

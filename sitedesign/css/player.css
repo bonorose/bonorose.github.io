@@ -13,7 +13,7 @@ element.style {
 }
 
 .collapsible {
-    background-color: #f4623a;
+    background-color: #903f4c;
     color: white;
     cursor: pointer;
     padding: 18px;
@@ -25,7 +25,7 @@ element.style {
   }
   
   .active, .collapsible:hover {
-    background-color: #ee3e0d;
+    background-color: #903f4c;
   }
   
   .content {
@@ -41,7 +41,7 @@ element.style {
     bottom: 0%;
     left: 0;
     width: 40%;
-    background-color: #f4623a
+    background-color: #903f4c;
     border: 0.1px solid #f1f4f1;
   }
 
@@ -60,6 +60,13 @@ element.style {
   
   .card-signin .card-title {
     margin-bottom: 3rem;
+    font-weight: 300;
+    font-size: 1.5rem;
+  }
+
+  .card-signin .card-title2 {
+    margin-bottom: 1rem;
+    margin-top: 2rem;
     font-weight: 300;
     font-size: 1.5rem;
   }
@@ -105,7 +112,7 @@ element.style {
     margin-bottom: 0;
     /* Override default `<label>` margin */
     line-height: 1.5;
-    color: #495057;
+    color: #5c82a8;
     border: 2px solid transparent;
     border-radius: .25rem;
     transition: all .1s ease-in-out;

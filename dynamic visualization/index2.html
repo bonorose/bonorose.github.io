@@ -663,6 +663,28 @@
 			function DrawPlane(planeNormal, origin){
 			var plane = new THREE.Plane(origin);
 			plane.setFromNormalAndCoplanarPoint( planeNormal, origin ).normalize();
+				/* TEST PLANE
+			//Adjusting Math.Pi changes the segment displayed.
+			var planeGeometry = new THREE.RingGeometry(40, 50, 10, 1);
+
+			// Align the geometry to the plane
+			var coplanarPoint = plane.coplanarPoint();
+			var focalPoint = new THREE.Vector3().copy(coplanarPoint).add(plane.normal);
+			planeGeometry.lookAt(focalPoint);
+			planeGeometry.translate(coplanarPoint.x, coplanarPoint.y, coplanarPoint.z);
+
+			// Create mesh with the geometry
+			var planeMaterial = new THREE.MeshLambertMaterial({color: 0xff0000, side: THREE.DoubleSide});
+			var dispPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+			dispPlane.rotation.y = -1/2;
+			dispPlane.rotation.x = 1;
+			dispPlane.position.z = 7;
+			dispPlane.position.y = 30;
+			dispPlane.position.x = -5;
+			dispPlane.scale.set(1.5, 1.5, 1.5 );
+			scene.add(dispPlane);
+				*/
 
 			//Adjusting Math.Pi changes the segment displayed.
 			var planeGeometry = new THREE.RingGeometry(40, 50, 10, 1, 0, Math.PI / 4);
@@ -679,8 +701,9 @@
 
 			dispPlane.rotation.y = -1/2;
 			dispPlane.rotation.x = 1;
-			dispPlane.position.z = 22;
-			dispPlane.position.y = 10;
+			dispPlane.position.z = 5;
+			dispPlane.position.y = 30;
+			dispPlane.position.x = -10;
 			dispPlane.scale.set(1.5, 1.5, 1.5 );
 			scene.add(dispPlane);
 
@@ -699,8 +722,9 @@
 
 			dispPlane.rotation.y = -1/2;
 			dispPlane.rotation.x = 1;
-			dispPlane.position.z = 22;
-			dispPlane.position.y = 10;
+			dispPlane.position.z = 5;
+			dispPlane.position.y = 30;
+			dispPlane.position.x = -10;
 			dispPlane.scale.set(1.5, 1.5, 1.5 );
 			scene.add(dispPlane);
 
@@ -719,8 +743,9 @@
 
 			dispPlane.rotation.y = -1/2;
 			dispPlane.rotation.x = 1;
-			dispPlane.position.z = 22;
-			dispPlane.position.y = 10;
+			dispPlane.position.z = 5;
+			dispPlane.position.y = 30;
+			dispPlane.position.x = -10;
 			dispPlane.scale.set(1.5, 1.5, 1.5 );
 			scene.add(dispPlane);
 
@@ -739,8 +764,9 @@
 
 			dispPlane.rotation.y = -1/2;
 			dispPlane.rotation.x = 1;
-			dispPlane.position.z = 22;
-			dispPlane.position.y = 10;
+			dispPlane.position.z = 5;
+			dispPlane.position.y = 30;
+			dispPlane.position.x = -10;
 			dispPlane.scale.set(1.5, 1.5, 1.5 );
 			scene.add(dispPlane);
 
@@ -760,8 +786,9 @@
 
 			dispPlane.rotation.y = -1/2;
 			dispPlane.rotation.x = 1;
-			dispPlane.position.z = 22;
-			dispPlane.position.y = 10;
+			dispPlane.position.z = 5;
+			dispPlane.position.y = 30;
+			dispPlane.position.x = -10;
 			dispPlane.scale.set(1.5, 1.5, 1.5 );
 			scene.add(dispPlane);
 
@@ -781,8 +808,9 @@
 
 			dispPlane.rotation.y = -1/2;
 			dispPlane.rotation.x = 1;
-			dispPlane.position.z = 22;
-			dispPlane.position.y = 10;
+			dispPlane.position.z = 5;
+			dispPlane.position.y = 30;
+			dispPlane.position.x = -10;
 			dispPlane.scale.set(1.5, 1.5, 1.5 );
 			scene.add(dispPlane);
 		}
@@ -813,8 +841,9 @@
 
 			dispPlane.rotation.y = -1/2;
 			dispPlane.rotation.x = 1;
-			dispPlane.position.z = 22;
-			dispPlane.position.y = 10;
+			dispPlane.position.z = 2;
+			dispPlane.position.y = 30;
+			dispPlane.position.x = -10;
 			dispPlane.scale.set(1.5, 1.5, 1.5 );
 			//dispPlane.rotation.set(pointX[i],pointY[i],pointZ[i]);
 			dispPlane.rotation.set

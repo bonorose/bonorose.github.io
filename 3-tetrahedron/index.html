@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>three.js webgl - FBX loader</title>
+		<title>three.js webgl - Tetrahedron viewer</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<link type="text/css" rel="stylesheet" href="css/main.css">
@@ -17,6 +17,8 @@
 			import * as THREE from './build/three.module.js';
 			import { OrbitControls } from './jsm/controls/OrbitControls.js';
 			import { FBXLoader } from './jsm/loaders/FBXLoader.js';
+				
+			import {GUI} from '/jsm/libs/dat.gui.module.js';
 
 			var container, stats, controls;
 			var camera, scene, renderer, light;
@@ -25,8 +27,23 @@
 
 			var mixer;
 
+			var opacityset = 0.5;
+			
+			/*var gui = new GUI();
+			
+			
+			//Have to find a way to check amount of stages recorded before loading gui or just reloading when the json is uploaded.
+			var folder1 = gui.addFolder('Control');
+			folder1.add('opacity', 0 ,1) //
+     		 .name('Opacity')
+    		  .onChange(opacityset_model)
+			;
+			*/
+
 			init();
 			animate();
+
+
 
 			function init() {
 
@@ -61,18 +78,18 @@
 				mesh.receiveShadow = true;
 				scene.add( mesh );
 
-				var grid = new THREE.GridHelper( 200, 20, 0xff0000, 0x0000ff );
+				var grid = new THREE.GridHelper( 400, 20, 0xff0000, 0x0000ff );
 				grid.material.opacity = 0.5;
 				grid.material.transparent = true;
 				scene.add( grid );
 
 				// model
 				var loader = new FBXLoader();
-				loader.load( 'models/tetrahedron.fbx', function ( object ) {
+				loader.load( 'models/tetrahedron_2.fbx', function ( object ) {
 
 					mixer = new THREE.AnimationMixer( object );
 					// - Adds shadows for realism. Removed as it hinders geometry presentation.
-					object.traverse( function ( child ) {
+					/*object.traverse( function ( child ) {
 
 						if ( child.isMesh ) {
 
@@ -81,15 +98,66 @@
 
 						}
 
-					} );
-					
+					} );*/
+															
 
 					object.traverse(function (child) {
 						if ( child.isMesh ) {
+							const oldMat = child.material;
+
+							child.material = new THREE.MeshLambertMaterial( {  
+							color:0xffffff, // sets the colour of the inner tetrahedron
+							map: oldMat.map,
+							opacity: opacityset,
+							transparent: true
+							//etc
+							} );
+
+
 							var wireframeGeomtry = new THREE.WireframeGeometry( child.geometry );
 							var wireframeMaterial = new THREE.LineBasicMaterial( { color: 0x000000 } );
 							var wireframe = new THREE.LineSegments( wireframeGeomtry, wireframeMaterial );
 							child.add(wireframe);
+						}
+
+					});
+
+					
+					scene.add( object );
+
+				} );
+
+									loader.load( 'models/disphenoid_2.fbx', function ( object ) {
+
+					mixer = new THREE.AnimationMixer( object );
+					// - Adds shadows for realism. Removed as it hinders geometry presentation.
+					/*object.traverse( function ( child ) {
+
+						if ( child.isMesh ) {
+
+							child.castShadow = true;
+							child.receiveShadow = true;
+
+						}
+
+					} ); */
+
+					object.traverse(function (child) {
+						if ( child.isMesh ) {
+
+							const oldMat = child.material;
+
+							child.material = new THREE.MeshLambertMaterial( {  
+							color:0xff0000, // sets the colour of the inner tetrahedron
+							map: oldMat.map,
+							//etc
+							} );
+							
+							var wireframeGeomtry = new THREE.WireframeGeometry( child.geometry );
+							var wireframeMaterial = new THREE.LineBasicMaterial( { color: 0x000000 } );
+							var wireframe = new THREE.LineSegments( wireframeGeomtry, wireframeMaterial );
+							child.add(wireframe);
+							
 						}
 
 					});

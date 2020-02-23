@@ -62,7 +62,7 @@
 				mesh.receiveShadow = true;
 				scene.add( mesh );
 
-				var grid = new THREE.GridHelper( 200, 10, 0xff0000, 0x0000ff );
+				var grid = new THREE.GridHelper( 200, 20, 0xff0000, 0x0000ff );
 				grid.material.opacity = 0.5;
 				grid.material.transparent = true;
 				scene.add( grid );
@@ -72,7 +72,7 @@
 				loader.load( 'models/tetrahedron.fbx', function ( object ) {
 
 					mixer = new THREE.AnimationMixer( object );
-					/* - Adds shadows for realism. Removed as it hinders geometry presentation.
+					// - Adds shadows for realism. Removed as it hinders geometry presentation.
 					object.traverse( function ( child ) {
 
 						if ( child.isMesh ) {
@@ -83,7 +83,7 @@
 						}
 
 					} );
-					*/
+					
 
 					object.traverse(function (child) {
 						if ( child.isMesh ) {

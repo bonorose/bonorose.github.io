@@ -79,27 +79,19 @@
 				scene.add( mesh );
 
 				var grid = new THREE.GridHelper( 400, 20, 0xff0000, 0x0000ff );
-				grid.material.opacity = 0.5;
+				grid.material.opacity = 0.2;
 				grid.material.transparent = true;
 				scene.add( grid );
+
+				// Axis Helper
+				var axesHelper = new THREE.AxesHelper( 400 );
+				scene.add( axesHelper );
 
 				// model
 				var loader = new FBXLoader();
 				var loader2 = new FBXLoader();
-				loader.load( 'models/tetrahedron_2.fbx', function ( object ) {
-
-					mixer = new THREE.AnimationMixer( object );
-					// - Adds shadows for realism. Removed as it hinders geometry presentation.
-					/*object.traverse( function ( child ) {
-
-						if ( child.isMesh ) {
-
-							child.castShadow = true;
-							child.receiveShadow = true;
-
-						}
-
-					} );*/
+				var loader3 = new FBXLoader();
+				loader.load( 'models/tetrahedron.fbx', function ( object ) {
 															
 
 					object.traverse(function (child) {
@@ -108,40 +100,20 @@
 
 							child.material = new THREE.MeshLambertMaterial( {  
 							color:0xffffff, // sets the colour of the inner tetrahedron
-							map: oldMat.map,
 							opacity: opacityset,
 							transparent: true
 							//etc
 							} );
-
-
 							var wireframeGeomtry = new THREE.WireframeGeometry( child.geometry );
 							var wireframeMaterial = new THREE.LineBasicMaterial( { color: 0x000000 } );
 							var wireframe = new THREE.LineSegments( wireframeGeomtry, wireframeMaterial );
 							child.add(wireframe);
 						}
-
 					});
-
-					
 					scene.add( object );
-
 				} );
 
-									loader2.load( 'models/disphenoid_2.fbx', function ( object ) {
-
-					mixer = new THREE.AnimationMixer( object );
-					// - Adds shadows for realism. Removed as it hinders geometry presentation.
-					/*object.traverse( function ( child ) {
-
-						if ( child.isMesh ) {
-
-							child.castShadow = true;
-							child.receiveShadow = true;
-
-						}
-
-					} ); */
+				loader2.load( 'models/central_red.fbx', function ( object ) {
 
 					object.traverse(function (child) {
 						if ( child.isMesh ) {
@@ -150,7 +122,6 @@
 
 							child.material = new THREE.MeshLambertMaterial( {  
 							color:0xff0000, // sets the colour of the inner tetrahedron
-							map: oldMat.map,
 							//etc
 							} );
 							
@@ -167,7 +138,31 @@
 					scene.add( object );
 
 				} );
+				loader3.load( 'models/central_bleu.fbx', function ( object ) {
 
+					object.traverse(function (child) {
+						if ( child.isMesh ) {
+
+							const oldMat = child.material;
+
+							child.material = new THREE.MeshLambertMaterial( {  
+							color:0xadd8e6, // sets the colour of the inner tetrahedron
+							//etc
+							} );
+							
+							var wireframeGeomtry = new THREE.WireframeGeometry( child.geometry );
+							var wireframeMaterial = new THREE.LineBasicMaterial( { color: 0x000000 } );
+							var wireframe = new THREE.LineSegments( wireframeGeomtry, wireframeMaterial );
+							child.add(wireframe);
+							
+						}
+
+					});
+
+
+					scene.add( object );
+
+					} );
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
@@ -175,7 +170,18 @@
 				container.appendChild( renderer.domElement );
 
 				controls = new OrbitControls( camera, renderer.domElement );
+				
 				controls.target.set( 0, 100, 0 );
+
+				controls.enableDamping = true;
+				controls.dampingFactor = 0.25;
+				controls.enableZoom = true;
+
+				controls.maxPolarAngle = 1.5;
+				controls.minPolarAngle = 0.8;
+
+				controls.autoRotate = true;
+				controls.autoRotateSpeed = 7;
 				controls.update();
 
 				window.addEventListener( 'resize', onWindowResize, false );
@@ -202,6 +208,7 @@
 				if ( mixer ) mixer.update( delta );
 
 				renderer.render( scene, camera );
+				controls.update();
 
 			}
 

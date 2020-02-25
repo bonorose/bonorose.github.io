@@ -87,10 +87,35 @@
 				var axesHelper = new THREE.AxesHelper( 400 );
 				scene.add( axesHelper );
 
+				var loaderT = new THREE.FontLoader();
+
+				loaderT.load( 'fonts/helvetiker_regular.typeface.json', function ( font ) {
+
+				var  textGeo = new THREE.TextGeometry('Y', {
+					size: 5,
+					height: 2,
+					curveSegments: 6,
+					font: "helvetiker",
+					style: "normal"       
+				});
+			});
+				var  color = new THREE.Color();
+				color.setRGB(255, 250, 250);
+				var  textMaterial = new THREE.MeshBasicMaterial({ color: color });
+				var  text = new THREE.Mesh(textGeo , textMaterial);
+
+				text.position.x = axis.geometry.vertices[1].x;
+				text.position.y = axis.geometry.vertices[1].y;
+				text.position.z = axis.geometry.vertices[1].z;
+				text.rotation = camera.rotation;
+				scene.add(text);
+
+
 				// model
 				var loader = new FBXLoader();
 				var loader2 = new FBXLoader();
 				var loader3 = new FBXLoader();
+
 				loader.load( 'models/tetrahedron.fbx', function ( object ) {
 															
 
@@ -112,7 +137,6 @@
 					});
 					scene.add( object );
 				} );
-
 				loader2.load( 'models/central_red.fbx', function ( object ) {
 
 					object.traverse(function (child) {
@@ -163,6 +187,7 @@
 					scene.add( object );
 
 					} );
+				
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );

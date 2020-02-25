@@ -40,7 +40,6 @@
     		  .onChange(opacityset_model)
 			;
 			*/
-
 			init();
 			animate();
 
@@ -87,26 +86,7 @@
 				axis_init();
 
 				// Text
-				/*
-				var  textGeo = new THREE.TextGeometry('Y', {
-					size: 5,
-					height: 2,
-					curveSegments: 6,
-					font: "helvetiker",
-					style: "normal"       
-				});
 
-				var  color = new THREE.Color();
-				color.setRGB(255, 250, 250);
-				var  textMaterial = new THREE.MeshBasicMaterial({ color: color });
-				var  text = new THREE.Mesh(textGeo , textMaterial);
-
-				text.position.x = axis.geometry.vertices[1].x;
-				text.position.y = axis.geometry.vertices[1].y;
-				text.position.z = axis.geometry.vertices[1].z;
-				text.rotation = camera.rotation;
-				scene.add(text);
-				*/
 
 				// model
 				var loader = new FBXLoader();

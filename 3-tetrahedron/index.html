@@ -32,6 +32,7 @@
 			var opacityset = 0.35; // Changes tetrahedron visability
 
 			var arrowHelper = new THREE.Object3D();
+			var axisLabels = new THREE.Object3D();
 			var grid;
 
 			init();
@@ -225,7 +226,28 @@
 
 				loader.load( './fonts/helvetiker_regular.typeface.json', function ( font ) {
 
-					var textGeometry = new THREE.TextGeometry( "+ X", {
+					var textGeometry = new THREE.TextGeometry( "0", {
+						font: font,
+
+						size: 15,
+						height: 3,
+						curveSegments: 4,
+
+						bevelThickness: 1,
+						bevelSize: 1,
+						bevelEnabled: true
+
+					});
+
+					var textMaterial = new THREE.MeshPhongMaterial( 
+					{ color: 0x000000, specular: 0xffffff }
+					);
+
+					var zeroLabel = new THREE.Mesh( textGeometry, textMaterial );
+					zeroLabel.position.set(-6,0,0);
+					axisLabels.add( zeroLabel );
+
+					textGeometry = new THREE.TextGeometry( "+ X", {
 						font: font,
 
 						size: 10,
@@ -244,7 +266,7 @@
 
 					var xLabel_plus = new THREE.Mesh( textGeometry, textMaterial );
 					xLabel_plus.position.set(150,10,0);
-					scene.add( xLabel_plus );
+					axisLabels.add( xLabel_plus );
 
 					textGeometry = new THREE.TextGeometry( "X -", {
 						font: font,
@@ -261,7 +283,7 @@
 
 					var xLabel_minus = new THREE.Mesh( textGeometry, textMaterial );
 					xLabel_minus.position.set(-150,10,0);
-					scene.add( xLabel_minus );
+					axisLabels.add( xLabel_minus );
 
 					textGeometry = new THREE.TextGeometry( "+ Y", {
 						font: font,
@@ -278,7 +300,7 @@
 
 					var yLabel_plus = new THREE.Mesh( textGeometry, textMaterial );
 					yLabel_plus.position.set(0,10,150);
-					scene.add( yLabel_plus );
+					axisLabels.add( yLabel_plus );
 
 					textGeometry = new THREE.TextGeometry( "- Y", {
 						font: font,
@@ -295,7 +317,7 @@
 
 					var yLabel_minus = new THREE.Mesh( textGeometry, textMaterial );
 					yLabel_minus.position.set(0,10,- 150);
-					scene.add( yLabel_minus );
+					axisLabels.add( yLabel_minus );
 
 					textGeometry = new THREE.TextGeometry( "+ Z", {
 						font: font,
@@ -312,7 +334,8 @@
 
 					var zLabel = new THREE.Mesh( textGeometry, textMaterial );
 					zLabel.position.set(0,150,0);
-					scene.add( zLabel );
+					axisLabels.add( zLabel );
+					scene.add(axisLabels);
 			});
 			}
 
@@ -352,6 +375,8 @@
 				.name('Axis Arrows');
 				gui.add(grid, 'visible')
 				.name('Coordinate System');
+				gui.add(axisLabels, 'visible')
+				.name('Axis Labels');
 			}
 		</script>
 	</body>

@@ -332,10 +332,28 @@
 
 					});
 
-					var zLabel = new THREE.Mesh( textGeometry, textMaterial );
-					zLabel.position.set(0,150,0);
-					axisLabels.add( zLabel );
+					var zLabel_plus = new THREE.Mesh( textGeometry, textMaterial );
+					zLabel_plus.position.set(0,150,0);
+					axisLabels.add( zLabel_plus );
+
+					textGeometry = new THREE.TextGeometry( "- Z", {
+						font: font,
+
+						size: 10,
+						height: 1,
+						curveSegments: 4,
+
+						bevelThickness: 1,
+						bevelSize: 1,
+						bevelEnabled: true
+
+					});
+
+					var zLabel_minus = new THREE.Mesh( textGeometry, textMaterial );
+					zLabel_minus.position.set(0,-150,0);
+					axisLabels.add( zLabel_minus );
 					scene.add(axisLabels);
+					
 			});
 			}
 

@@ -13,12 +13,11 @@
 		</div>
 
 		<script type="module">
-
+			// modules
 			import * as THREE from './build/three.module.js';
 			import { OrbitControls } from './jsm/controls/OrbitControls.js';
 			import { FBXLoader } from './jsm/loaders/FBXLoader.js';
-				
-			//import {GUI} from '/jsm/libs/dat.gui.module.js';
+			import * as dat from './jsm/libs/dat.gui.module.js';
 
 			var container, stats, controls;
 			var camera, scene, renderer, light;
@@ -29,22 +28,14 @@
 			var axisCheck = true; // Changes axis visability
 			var gridCheck = true; // Changes coordinate grid visability
 			var opacityset = 0.35; // Changes tetrahedron visability
-			
-			/*var gui = new GUI();
-			
-			
-			//Have to find a way to check amount of stages recorded before loading gui or just reloading when the json is uploaded.
-			var folder1 = gui.addFolder('Control');
-			folder1.add('opacity', 0 ,1) //
-     		 .name('Opacity')
-    		  .onChange(opacityset_model)
-			;
-			*/
+
+			var arrowHelper = new THREE.Object3D();
+			var grid;
+
 			init();
-			animate();
+			animate();		
 
 			function init() {
-
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
 
@@ -55,20 +46,8 @@
 				scene.background = new THREE.Color( 0xa0a0a0 );
 				scene.fog = new THREE.Fog( 0xa0a0a0, 200, 1000 );
 
-				light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
-				light.position.set( 0, 200, 0 );
-				scene.add( light );
-
-				light = new THREE.DirectionalLight( 0xffffff );
-				light.position.set( 0, 200, 100 );
-				light.castShadow = true;
-				light.shadow.camera.top = 180;
-				light.shadow.camera.bottom = - 100;
-				light.shadow.camera.left = - 120;
-				light.shadow.camera.right = 120;
-				scene.add( light );
-
-				// scene.add( new CameraHelper( light.shadow.camera ) );
+				// lights
+				lights_init();
 
 				// ground
 				var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2000, 2000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
@@ -76,7 +55,7 @@
 				mesh.receiveShadow = true;
 				scene.add( mesh );
 
-				var grid = new THREE.GridHelper( 400, 20, 0xff0000, 0x0000ff );
+				grid = new THREE.GridHelper( 400, 20, 0xff0000, 0x0000ff );
 				grid.material.opacity = 0.2;
 				grid.material.transparent = true;
 				scene.add( grid );
@@ -86,7 +65,26 @@
 				axis_init();
 
 				// Text
+				/*
+				var  textGeo = new THREE.TextGeometry('Y', {
+					size: 5,
+					height: 2,
+					curveSegments: 6,
+					font: "helvetiker",
+					style: "normal"       
+				});
 
+				var  color = new THREE.Color();
+				color.setRGB(255, 250, 250);
+				var  textMaterial = new THREE.MeshBasicMaterial({ color: color });
+				var  text = new THREE.Mesh(textGeo , textMaterial);
+
+				text.position.x = axis.geometry.vertices[1].x;
+				text.position.y = axis.geometry.vertices[1].y;
+				text.position.z = axis.geometry.vertices[1].z;
+				text.rotation = camera.rotation;
+				scene.add(text);
+				*/
 
 				// model
 				var loader = new FBXLoader();
@@ -174,22 +172,11 @@
 				container.appendChild( renderer.domElement );
 
 				controls = new OrbitControls( camera, renderer.domElement );
-				
-				controls.target.set( 0, 100, 0 );
-
-				controls.enableDamping = true;
-				controls.dampingFactor = 0.25;
-				controls.enableZoom = true;
-
-				controls.maxPolarAngle = 1.5;
-				controls.minPolarAngle = 0.8;
-
-				controls.autoRotate = true;
-				controls.autoRotateSpeed = 7;
+				orbital_init();
 				controls.update();
-
+				
+				controlGUI_init();
 				window.addEventListener( 'resize', onWindowResize, false );
-
 			}
 
 			function onWindowResize() {
@@ -200,8 +187,6 @@
 				renderer.setSize( window.innerWidth, window.innerHeight );
 
 			}
-
-			//
 
 			function animate() {
 
@@ -244,7 +229,7 @@
 				var arrowHelper5 = new THREE.ArrowHelper( dir5, origin, length, hex2 );
 				var arrowHelper6 = new THREE.ArrowHelper( dir6, origin, length, hex3 );
 				
-				var arrowHelper = new THREE.Object3D();
+				
 				arrowHelper.add(arrowHelper1);
 				arrowHelper.add(arrowHelper2);
 				arrowHelper.add(arrowHelper3);
@@ -255,6 +240,43 @@
 				arrowHelper.visible = axisCheck;
 			}
 
+			function orbital_init(){
+				controls.target.set( 0, 100, 0 );
+
+				controls.enableDamping = true;
+				controls.dampingFactor = 0.25;
+				
+				controls.enableZoom = true;
+
+				controls.maxPolarAngle = 1.5;
+				controls.minPolarAngle = 0.8;
+
+				controls.autoRotate = true;
+				controls.autoRotateSpeed = 7;
+			}
+
+			function lights_init(){
+				light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
+				light.position.set( 0, 200, 0 );
+				scene.add( light );
+
+				light = new THREE.DirectionalLight( 0xffffff );
+				light.position.set( 0, 200, 100 );
+				light.castShadow = true;
+				light.shadow.camera.top = 180;
+				light.shadow.camera.bottom = - 100;
+				light.shadow.camera.left = - 120;
+				light.shadow.camera.right = 120;
+				scene.add( light );
+			}
+
+			function controlGUI_init(){
+				var gui = new dat.GUI();
+				gui.add(arrowHelper, 'visible')
+				.name('Axis Arrows');
+				gui.add(grid, 'visible')
+				.name('Coordinate System');
+			}
 		</script>
 
 	</body>

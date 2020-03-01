@@ -389,12 +389,14 @@
 
 			function controlGUI_init(){
 				var gui = new dat.GUI();
+				gui.add(axisLabels, 'visible')
+				.name('Axis Labels');
 				gui.add(arrowHelper, 'visible')
 				.name('Axis Arrows');
 				gui.add(grid, 'visible')
 				.name('Coordinate System');
-				gui.add(axisLabels, 'visible')
-				.name('Axis Labels');
+				gui.add(controls, 'autoRotate')
+				.name('Automatic Rotation');
 			}
 		</script>
 	</body>

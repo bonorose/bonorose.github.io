@@ -4,9 +4,11 @@
     <title>Clothes Configurator</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=yes, minimum-scale=1.0, maximum-scale=1.0">
-    <link type="text/css" rel="stylesheet" href="./css/bootstrap.min.css">
+    <meta name="author" content="Simeon Marlokov-Rose">
+    <link type="text/css" rel="stylesheet" href="./css/bootstrap2.css">
     <link type="text/css" rel="stylesheet" href="./css/dyo_style.css">
     <link type="text/css" rel="stylesheet" href="./css/fonts.css">
+    <link type="text/css" rel="stylesheet" href="./css/site.css">
 </head>
 
 <style>
@@ -27,13 +29,22 @@
   
 
 <body>
-    <div class="main container" style="position:absolute; top:50px; left:15px; right:15px; background:#ffffff">
+  <div class="main container" style="position:absolute; top:50px; left:15px; right:15px; background:#ffffff">
+
+    <div class="breadcrumb">
+        <a href="https://sportsuniformsaustralia.com.au/" title="Home Page">Home Page</a> <span class="breadcrumb-separator">&gt;</span>
+        <a href="https://www.subprint.com.au/custom-sportswear.html" title="Custom Sportswear Designs">Custom Sportswear Designs</a> <span class="breadcrumb-separator">&gt;</span>
+        <a href="https://www.subprint.com.au/custom-sportswear/boyleg-tights.html" title="Boyleg Tights">Boyleg Tights</a>
+        <span class="breadcrumb-separator">&gt;</span>
+      <span class="breadcrumb-current">Boyleg Tights 120</span>
+    </div>
 
     <div id="s1">
-        <div class="row">
 
-            <div id="configurator" class="col-md-8 col-sm-12" style="position:relative; top:15px;">
-                <div id="svg" style="background-image: none;">
+        <div class="row">
+          <div id="configurator" class="col-md-8 col-sm-12" style="overflow:auto">
+            <div id="svg" style="background-image: none;">
+                <div class="rsvg rsvg-first">
 
                   <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1472.78 471.44">
                     <defs>
@@ -123,6 +134,7 @@
                       
                 </div>
             </div>
+          </div>
 
             <div id="config-panel" class="col-md-4 col-sm-12">
                 
@@ -271,16 +283,21 @@
                 </div>
             </div>
 
-            <div class="bs-callout bs-callout-warning">
-              <p>*In order to use the configurator please use one of the following browesers, Chrome, Firefox, Safari, IE 9+</p>
-              <p>*If you <b style="color: #a87fee">have difficulties in saving the pattern</b> you designed, please take a screenshot or a photo of the pattern and send it to us via email tim@subprint.com.au</p>
-              <p>*Please do not use images of registered trademarks or copyrighted logos without permission from its rightful owners</p>
-            </div>
+
 
 
         </div>
+
+        <div class="bs-callout bs-callout-warning">
+          <p>*In order to use the configurator please use one of the following browesers - Chrome, Firefox, Safari, IE 9+</p>
+          <p>*If you <b style="color: #a87fee">have difficulties in saving the pattern</b> you designed, please take a screenshot or a photo of the pattern and send it to us via email tim@subprint.com.au</p>
+          <p>*Please do not use images of registered trademarks or copyrighted logos without permission from its rightful owners</p>
+        </div>
+
     </div>
-</div>
+  </div>
+  
+
 
 </body>
 

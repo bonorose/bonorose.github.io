@@ -47,7 +47,7 @@ path { transition: 0.5s; }
 #filelist .qf { position: relative; }
 #filelist .qf span { position: relative; z-index: 2; }
 #filelist .pb { height: 100%; background: #FCD27C; width: 0; position: absolute; }
-.dyo-tabs .tab-content { padding-top: 15px; min-height: 175px; margin-bottom: 20px; border-bottom: 1px solid #faa; }
+.dyo-tabs .tab-content { padding-top: 15px; min-height: 175px; margin-bottom: 20px; border-bottom: 1px solid #ddd; }
 .dyo-tabs ul.nav li a { font-size: 1.5em; }
 .dyo-tabs ul.nav li.active { font-weight: bold; }
 #right-panel { margin-top: -20px; }

@@ -1,0 +1,505 @@
+@font-face {
+	font-family: 'Aileron';
+	src: url('aileron_heavy.woff2') format('woff2'),
+		 url('aileron_heavy.woff') format('woff'),
+		 url('aileron_heavy.ttf') format('truetype'),
+		 url('aileron_heavy.svg#aileron_heavy') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Apex_Mk2';
+	src: url('apex_mk2_bold.woff2') format('woff2'),
+		 url('apex_mk2_bold.woff') format('woff'),
+		 url('apex_mk2_bold.ttf') format('truetype'),
+		 url('apex_mk2_bold.svg#apex_mk2_bold') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Bebas_Neue';
+	src: url('bebas_neue_bold.woff2') format('woff2'),
+		 url('bebas_neue_bold.woff') format('woff'),
+		 url('bebas_neue_bold.ttf') format('truetype'),
+		 url('bebas_neue_bold.svg#bebas_neue_bold') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Berg_Western';
+	src: url('berg_western.woff2') format('woff2'),
+		 url('berg_western.woff') format('woff'),
+		 url('berg_western.ttf') format('truetype'),
+		 url('berg_western.svg#berg_western') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Collegiate';
+	src: url('collegiate.woff2') format('woff2'),
+		 url('collegiate.woff') format('woff'),
+		 url('collegiate.ttf') format('truetype'),
+		 url('collegiate.svg#collegiate') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Comfortaa';
+	src: url('comfortaa_bold.woff2') format('woff2'),
+		 url('comfortaa_bold.woff') format('woff'),
+		 url('comfortaa_bold.ttf') format('truetype'),
+		 url('comfortaa_bold.svg#comfortaa_bold') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Copperplate';
+	src: url('copperplate.woff2') format('woff2'),
+		 url('copperplate.woff') format('woff'),
+		 url('copperplate.ttf') format('truetype'),
+		 url('copperplate.svg#copperplate') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Fela';
+	src: url('fela.woff2') format('woff2'),
+		 url('fela.woff') format('woff'),
+		 url('fela.ttf') format('truetype'),
+		 url('fela.svg#fela') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Fenix';
+	src: url('fenix.woff2') format('woff2'),
+		 url('fenix.woff') format('woff'),
+		 url('fenix.ttf') format('truetype'),
+		 url('fenix.svg#fenix') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Fibre_Vintage';
+	src: url('fibre_vintage.woff2') format('woff2'),
+		 url('fibre_vintage.woff') format('woff'),
+		 url('fibre_vintage.ttf') format('truetype'),
+		 url('fibre_vintage.svg#fibre_vintage') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Futura';
+	src: url('futura_heavy.woff2') format('woff2'),
+		 url('futura_heavy.woff') format('woff'),
+		 url('futura_heavy.ttf') format('truetype'),
+		 url('futura_heavy.svg#futura_heavy') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Hamster';
+	src: url('hamster.woff2') format('woff2'),
+		 url('hamster.woff') format('woff'),
+		 url('hamster.ttf') format('truetype'),
+		 url('hamster.svg#hamster') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Humblle_Rought';
+	src: url('humblle_rought.woff2') format('woff2'),
+		 url('humblle_rought.woff') format('woff'),
+		 url('humblle_rought.ttf') format('truetype'),
+		 url('humblle_rought.svg#humblle_rought') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Jersey_M54';
+	src: url('jersey_m54.woff2') format('woff2'),
+		 url('jersey_m54.woff') format('woff'),
+		 url('jersey_m54.ttf') format('truetype'),
+		 url('jersey_m54.svg#jersey_m54') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Klavika';
+	src: url('klavika_medium.woff2') format('woff2'),
+		 url('klavika_medium.woff') format('woff'),
+		 url('klavika_medium.ttf') format('truetype'),
+		 url('klavika_medium.svg#klavika_medium') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Monkstead_Round';
+	src: url('monkstead_round.woff2') format('woff2'),
+		 url('monkstead_round.woff') format('woff'),
+		 url('monkstead_round.ttf') format('truetype'),
+		 url('monkstead_round.svg#monkstead_round') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'NBA_Celtics';
+	src: url('nba_celtics.woff2') format('woff2'),
+		 url('nba_celtics.woff') format('woff'),
+		 url('nba_celtics.ttf') format('truetype'),
+		 url('nba_celtics.svg#nba_celtics') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'NBA_Lakers';
+	src: url('nba_lakers.woff2') format('woff2'),
+		 url('nba_lakers.woff') format('woff'),
+		 url('nba_lakers.ttf') format('truetype'),
+		 url('nba_lakers.svg#nba_lakers') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'New_Athletic_M54';
+	src: url('new_athletic_m54.woff2') format('woff2'),
+		 url('new_athletic_m54.woff') format('woff'),
+		 url('new_athletic_m54.ttf') format('truetype'),
+		 url('new_athletic_m54.svg#new_athletic_m54') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'NFL_Jaguars';
+	src: url('nfl_jaguars.woff2') format('woff2'),
+		 url('nfl_jaguars.woff') format('woff'),
+		 url('nfl_jaguars.ttf') format('truetype'),
+		 url('nfl_jaguars.svg#nfl_jaguars') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Norwester';
+	src: url('norwester.woff2') format('woff2'),
+		 url('norwester.woff') format('woff'),
+		 url('norwester.ttf') format('truetype'),
+		 url('norwester.svg#norwester') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Octin_Stencil';
+	src: url('octin_stencil_bold.woff2') format('woff2'),
+		 url('octin_stencil_bold.woff') format('woff'),
+		 url('octin_stencil_bold.ttf') format('truetype'),
+		 url('octin_stencil_bold.svg#octin_stencil_bold') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Okomito';
+	src: url('okomito_medium.woff2') format('woff2'),
+		 url('okomito_medium.woff') format('woff'),
+		 url('okomito_medium.ttf') format('truetype'),
+		 url('okomito_medium.svg#okomito_medium') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Old_Sport_01_College';
+	src: url('old_sport_01_college.woff2') format('woff2'),
+		 url('old_sport_01_college.woff') format('woff'),
+		 url('old_sport_01_college.ttf') format('truetype'),
+		 url('old_sport_01_college.svg#old_sport_01_college') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Playball';
+	src: url('playball.woff2') format('woff2'),
+		 url('playball.woff') format('woff'),
+		 url('playball.ttf') format('truetype'),
+		 url('playball.svg#playball') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Promesh_Mesh';
+	src: url('promesh_mesh.woff2') format('woff2'),
+		 url('promesh_mesh.woff') format('woff'),
+		 url('promesh_mesh.ttf') format('truetype'),
+		 url('promesh_mesh.svg#promesh_mesh') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Promesh_Stitch';
+	src: url('promesh_stitch.woff2') format('woff2'),
+		 url('promesh_stitch.woff') format('woff'),
+		 url('promesh_stitch.ttf') format('truetype'),
+		 url('promesh_stitch.svg#promesh_stitch') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Reckless';
+	src: url('reckless.woff2') format('woff2'),
+		 url('reckless.woff') format('woff'),
+		 url('reckless.ttf') format('truetype'),
+		 url('reckless.svg#reckless') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'RR_Beaver';
+	src: url('rr_beaver.woff2') format('woff2'),
+		 url('rr_beaver.woff') format('woff'),
+		 url('rr_beaver.ttf') format('truetype'),
+		 url('rr_beaver.svg#rr_beaver') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Rumblesport_Athletic';
+	src: url('rumblesport_athletic.woff2') format('woff2'),
+		 url('rumblesport_athletic.woff') format('woff'),
+		 url('rumblesport_athletic.ttf') format('truetype'),
+		 url('rumblesport_athletic.svg#rumblesport_athletic') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Sansita';
+	src: url('sansita_bold.woff2') format('woff2'),
+		 url('sansita_bold.woff') format('woff'),
+		 url('sansita_bold.ttf') format('truetype'),
+		 url('sansita_bold.svg#sansita_bold') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Signature';
+	src: url('signature.woff2') format('woff2'),
+		 url('signature.woff') format('woff'),
+		 url('signature.ttf') format('truetype'),
+		 url('signature.svg#signature') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Slope_Opera';
+	src: url('slope_opera.woff2') format('woff2'),
+		 url('slope_opera.woff') format('woff'),
+		 url('slope_opera.ttf') format('truetype'),
+		 url('slope_opera.svg#slope_opera') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'True_Crimes';
+	src: url('true_crimes.woff2') format('woff2'),
+		 url('true_crimes.woff') format('woff'),
+		 url('true_crimes.ttf') format('truetype'),
+		 url('true_crimes.svg#true_crimes') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+/*inactive fonts*/
+@font-face {
+	font-family: 'Bosox';
+	src: url('inactive/Bosox.woff2') format('woff2'),
+		 url('inactive/Bosox.woff') format('woff'),
+		 url('inactive/Bosox.ttf') format('truetype'),
+		 url('inactive/Bosox.svg#bosox') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Card_Characters';
+	src: url('inactive/Card_Characters.woff2') format('woff2'),
+		 url('inactive/Card_Characters.woff') format('woff'),
+		 url('inactive/Card_Characters.ttf') format('truetype'),
+		 url('inactive/Card_Characters.svg#card_characters') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family:'Disparador';
+	src: url('inactive/Disparador.woff') format('woff'),
+		url('inactive/Disparador.ttf') format('truetype'),
+		url('inactive/Disparador.svg#disparador') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'ESP';
+	src: url('inactive/ESP.woff2') format('woff2'),
+		 url('inactive/ESP.woff') format('woff'),
+		 url('inactive/ESP.ttf') format('truetype'),
+		 url('inactive/ESP.svg#esp') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'FM_University';
+	src: url('inactive/FM_University.woff2') format('woff2'),
+		 url('inactive/FM_University.woff') format('woff'),
+		 url('inactive/FM_University.ttf') format('truetype'),
+		 url('inactive/FM_University.svg#fm_university') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Intramural';
+	src: url('inactive/Intramural.woff2') format('woff2'),
+		 url('inactive/Intramural.woff') format('woff'),
+		 url('inactive/Intramural.ttf') format('truetype'),
+		 url('inactive/Intramural.svg#intramural') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Iron_Man';
+	src: url('inactive/Iron_Man.woff2') format('woff2'),
+		 url('inactive/Iron_Man.woff') format('woff'),
+		 url('inactive/Iron_Man.ttf') format('truetype'),
+		 url('inactive/Iron_Man.svg#iron_man') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Krunch';
+	src: url('inactive/Krunch.woff2') format('woff2'),
+		 url('inactive/Krunch.woff') format('woff'),
+		 url('inactive/Krunch.ttf') format('truetype'),
+		 url('inactive/Krunch.svg#krunch') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Machine';
+	src: url('inactive/Machine.woff') format('woff'),
+		 url('inactive/Machine.ttf') format('truetype'),
+		 url('inactive/Machine.svg#machine') format('svg');
+	font-weight: normal;
+	font-style: normal;
+
+}
+@font-face {
+	font-family: 'Nasalization';
+	src: url('inactive/Nasalization.woff') format('woff'),
+		 url('inactive/Nasalization.ttf') format('truetype'),
+		 url('inactive/Nasalization.svg#nasalization') format('svg');
+	font-weight: normal;
+	font-style: normal;
+
+}
+@font-face {
+	font-family: 'NBA_Bucks';
+	src: url('inactive/NBA_Bucks.woff2') format('woff2'),
+		 url('inactive/NBA_Bucks.woff') format('woff'),
+		 url('inactive/NBA_Bucks.ttf') format('truetype'),
+		 url('inactive/NBA_Bucks.svg#nba_bucks') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'NBA_Grizzlies';
+	src: url('inactive/NBA_Grizzlies.woff2') format('woff2'),
+		 url('inactive/NBA_Grizzlies.woff') format('woff'),
+		 url('inactive/NBA_Grizzlies.ttf') format('truetype'),
+		 url('inactive/NBA_Grizzlies.svg#nba_grizzlies') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'NBA_Mavericks';
+	src: url('inactive/NBA_Mavericks.woff2') format('woff2'),
+		 url('inactive/NBA_Mavericks.woff') format('woff'),
+		 url('inactive/NBA_Mavericks.ttf') format('truetype'),
+		 url('inactive/NBA_Mavericks.svg#nba_mavericks') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'NBA_Pacers';
+	src: url('inactive/NBA_Pacers.woff2') format('woff2'),
+		 url('inactive/NBA_Pacers.woff') format('woff'),
+		 url('inactive/NBA_Pacers.ttf') format('truetype'),
+		 url('inactive/NBA_Pacers.svg#nba_pacers') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'NBA_Rockets';
+	src: url('inactive/NBA_Rockets.woff2') format('woff2'),
+		 url('inactive/NBA_Rockets.woff') format('woff'),
+		 url('inactive/NBA_Rockets.ttf') format('truetype'),
+		 url('inactive/NBA_Rockets.svg#nba_rockets') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'NFL_Chargers';
+	src: url('inactive/NFL_Chargers.woff2') format('woff2'),
+		 url('inactive/NFL_Chargers.woff') format('woff'),
+		 url('inactive/NFL_Chargers.ttf') format('truetype'),
+		 url('inactive/NFL_Chargers.svg#nfl_chargers') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'NFL_Lions';
+	src: url('inactive/NFL_Lions.woff2') format('woff2'),
+		 url('inactive/NFL_Lions.woff') format('woff'),
+		 url('inactive/NFL_Lions.ttf') format('truetype'),
+		 url('inactive/NFL_Lions.svg#nfl_lions') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family:'NovaMono';
+	src: url('inactive/NovaMono.woff') format('woff'),
+		url('inactive/NovaMono.ttf') format('truetype'),
+		url('inactive/NovaMono.svg#novamono') format('svg');
+	font-weight: 400;
+	font-style: normal;
+	font-stretch: normal;
+}
+@font-face {
+	font-family:'Prometheus';
+	src: url('inactive/Prometheus.woff') format('woff'),
+		url('inactive/Prometheus.ttf') format('truetype'),
+		url('inactive/Prometheus.svg#prometheus') format('svg');
+	font-weight: 400;
+	font-style: normal;
+	font-stretch: normal;
+}
+@font-face {
+	font-family: 'Sports_World';
+	src: url('inactive/Sports_World.woff2') format('woff2'),
+		 url('inactive/Sports_World.woff') format('woff'),
+		 url('inactive/Sports_World.ttf') format('truetype'),
+		 url('inactive/Sports_World.svg#sports_world') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family:'Varsity';
+	src: url('inactive/Varsity.woff') format('woff'),
+		url('inactive/Varsity.ttf') format('truetype'),
+		url('inactive/Varsity.svg#varsity') format('svg');
+	font-weight: 400;
+	font-style: normal;
+	font-stretch: normal;
+}
+@font-face {
+	font-family: 'Vikings';
+	src: url('inactive/Vikings.woff2') format('woff2'),
+		 url('inactive/Vikings.woff') format('woff'),
+		 url('inactive/Vikings.ttf') format('truetype'),
+		 url('inactive/Vikings.svg#vikings') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}

@@ -1,0 +1,116 @@
+@charset "UTF-8";
+*{margin: 0; padding: 0}
+*, :before, :after { box-sizing: border-box; }
+.colorPicker_control { width: 160px; height: 40px; padding: 0 !important; border: 2px solid #ccc; cursor: pointer; line-height: 40px; float: left; margin-right: 10px; text-align: center; font-weight: bold; }
+.colorPicker_control.active{ position: relative; border-color: #d30044; border-bottom: none; z-index: 10000; }
+.colorPicker_control input { display: none; }
+.colorPicker_pallette { width: 480px; min-height: 200px; position: absolute; border: 2px solid #d30044; background-color: #fff; padding: 2px; z-index: 9999; margin-top: 38px; max-width: 100%; box-sizing: border-box; }
+.colorPicker_pallette .swatch { height: 30px; width: 20%; border: 1px solid #ccc; float: left; cursor: pointer; line-height: 30px; box-sizing: border-box; text-align: center; color: #ccc; }
+.colorPicker_pallette .swatch:hover{ border-color: #333; }
+.colorPicker_pallette .swatch.transparent { border: 1px solid #c00; text-align: center; color: #c00; font-size: 2em; line-height: 1em; }
+#wrap { width: 930px; margin: 0 auto; position: relative; overflow: hidden; height: 650px; }
+#dyo { position:relative; padding: 0; }
+#svg { min-height:500px; background: url(images/ajaxLoader.gif) center 200px no-repeat; }
+ul.fonts { list-style:none; }
+ul.fonts li { font-size: 2em; cursor: pointer; width: 50%; line-height: 36px; float: left; display: inline-block; padding: 5px 10px; overflow: hidden; }
+ul.fonts li:hover{ background: #d30044; color: #fff; }
+path { transition: 0.5s; }
+.drzw { position: absolute; box-sizing: content-box; }
+.drzw * { box-sizing: content-box; }
+.drz .team, .drz .img { display: inline-block; cursor: move; font-size: 40px; line-height: 40px; white-space: nowrap; text-align: center; transition: 0.5s;}
+.drz .team, { -webkit-font-smoothing: antialiased; }
+.drz .team.ol { -webkit-text-stroke: 1px #000; }
+.drz .img { width: 100%; height: 100% }
+.drz{ padding: 32px; z-index: 3; background: rgba(255,255,255,0); }
+.drz .fixie { display: block; background: url(trans.png); position: absolute; top: 0; left: 0; width:100%; height: 100%; }
+.drz:hover { z-index: 999; }
+.drz:hover .team, .drz.hi .team, .drz:hover img, .drz.hi img{ background: rgba(22,43,72,0.3); }
+.drz .ctrl{ cursor: pointer; position: absolute; width: 36px; height: 36px; display: none; background: #f1f1f1; border-radius: 4px; z-index: 1000; text-align: center;}
+.drz .ctrl:before{ display: inline-block; font-family: "Glyphicons Halflings"; font-style: normal; font-weight: 400; position: relative; font-size: 24px; line-height: 36px; }
+.drz .ctrl:hover { color: #D30044; }
+.drz .move{ top: 0px; left: 0px; background: url(move.png) 0 0 no-repeat; }
+.drz .del{ top: 0px; right: 0px; }
+.drz .del:before { content:"\e014"; }
+.drz .rotate { bottom: 0px; left: 0px; }
+.drz .rotate:before { content:"\e030"; }
+.drz .clrpikr { top: 0px; left: 0px; }
+.drz .clrpikr:before { content:"\e064"; background: linear-gradient(violet,blue,green,yellow,orange,red,red); color:transparent; background-clip: text; -webkit-background-clip: text; }
+.drz .ctrl:hover.clrpikr:before { background-clip: none; -webkit-background-clip: none; background: none; color: #D30044; }
+.drz .tooltip { min-width: 100px; }
+.row.cls { margin-top: 10px; }
+.gcb { height: 30px; margin: 5px 0; border: 1px solid #ccc; text-align: center; line-height: 30px; font-weight: bold; font-size: 1.2em; cursor: pointer; }
+.gcb.act { border-color: #D30044; }
+.ui-resizable-handle:before{ content:"\e096"; font-size: 1.2em; -ms-transform: rotate(90deg); -webkit-transform: rotate(90deg); transform: rotate(90deg); }
+.ui-resizable-se { bottom: 0px; right: 0px; }
+
+#filelist { font-size: 1.2em; border: 1px solid #ddd; min-height: 30px; border-radius: 4px; }
+#filelist .qf { position: relative; }
+#filelist .qf span { position: relative; z-index: 2; }
+#filelist .pb { height: 100%; background: #FCD27C; width: 0; position: absolute; }
+.dyo-tabs .tab-content { padding-top: 15px; min-height: 175px; margin-bottom: 20px; border-bottom: 1px solid #ddd; }
+.dyo-tabs ul.nav li a { font-size: 1.5em; }
+.dyo-tabs ul.nav li.active { font-weight: bold; }
+#right-panel { margin-top: -20px; }
+#right-panel .affix{ background: rgba(255,255,255,0.6); border-radius: 10px; }
+.modal-body{ font-size: 1.2em; }
+.rsvg { margin-top: 20px; }
+.rsvg.rsvg-first { margin-top: 0; }
+/*.rsvg .off { filter: url(#svgBlur);}*/
+.rsvg .on { stroke-width: 1; stroke: #fff; stroke-dasharray: 5; animation: dash 1s infinite normal; }
+#modal-select-font .modal-body li { white-space: nowrap; }
+.form-control.error { background: #f2dede; }
+
+@keyframes dash {
+	to { stroke-dashoffset: 10; }
+}
+
+input.size_drop[readonly] { cursor: text; }
+
+@media print{
+	#right-panel{ display: none; }
+}
+
+@media (max-width: 991px){
+	#right-panel .affix { position: relative; }
+	.gcb { height: 60px; line-height: 60px; font-size: 1.5em;}
+	.colorPicker_control { width: 200px; height: 80px; }
+	.colorPicker_pallette { width: 680px; margin-top: 78px;}
+	.colorPicker_pallette .swatch { height: 75px; width: 20%; line-height: 24px; }
+}
+
+@media (max-width: 767px){
+	path { transition: none; }
+	.drz .team, .drz .img { transition: none; }
+	#right-panel { margin-top: 10px; }
+}
+
+@media all and (-ms-high-contrast: none),
+(-ms-high-contrast: active) {
+/* IE10+ CSS styles go here */
+	.drz .clrpikr:before { color: #000; background: transparent; }
+	.drz .team.ol { text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; }
+}
+
+@-moz-keyframes spin {
+	from { -moz-transform: rotate(0deg); }
+	to { -moz-transform: rotate(360deg); }
+}
+@-webkit-keyframes spin {
+	from { -webkit-transform: rotate(0deg); }
+	to { -webkit-transform: rotate(360deg); }
+}
+@keyframes spin {
+	from {transform:rotate(0deg); }
+	to {transform:rotate(360deg); }
+}
+
+.glyphicon-refresh-animate {
+	animation: spin .7s infinite linear;
+	-animation: spin .7s infinite linear;
+	-webkit-animation: spin .7s infinite linear;
+	-moz-animation: spin .7s infinite linear;
+	-webkit-animation-name: spin;
+	-webkit-animation-duration: 0.7s;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-timing-function: linear;
+}

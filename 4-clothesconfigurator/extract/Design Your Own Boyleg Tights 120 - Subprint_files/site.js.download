@@ -1,0 +1,24 @@
+$(function(){
+	var onscroll = function(){
+		var st = $(window).scrollTop() + 10;
+		if( st > 105){
+			$('.navigator').css({'position': 'fixed', 'top': 0});
+		}else{
+			$('.navigator').css({'position': 'absolute', 'top': 105});
+		}
+	};
+	$(window).on('scroll', onscroll);
+	$('#menu').on('click', 'a', function(){
+		if($(this).next().hasClass('smtog') && $(this).next().is(':visible')){
+			$(this).next().trigger('click');
+			return false;
+		}
+	});
+	$('#menu').on('click', 'a.smtog', function(){
+		if($(this).parent().hasClass('on')){
+			$(this).parent().removeClass('on');
+		}else{
+			$(this).parent().addClass('on');
+		}
+	});
+});

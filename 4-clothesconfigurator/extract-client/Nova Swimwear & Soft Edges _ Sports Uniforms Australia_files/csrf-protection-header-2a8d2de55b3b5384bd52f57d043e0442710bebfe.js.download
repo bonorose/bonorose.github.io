@@ -1,0 +1,81 @@
+(function () {
+    var xsrfToken = 'X-XSRF-TOKEN';
+    function getToken() {
+        var cookie = document.cookie.match('(^|[^;]+)\\s*' + 'XSRF-TOKEN' + '\\s*=\\s*([^;]+)');
+        return cookie ? cookie.pop() : '';
+    }
+
+    function isLocalRequest(url) {
+        if (url.match(new RegExp('^(https?:)?\/\/' + window.location.hostname))) {
+            return true;
+        }
+
+        return !url.match(new RegExp('^(https?:)?\/\/'));
+    }
+
+    function isWhiteListed(action, whitelist) {
+        for (var i = 0; i < whitelist.length; i++) {
+            if (action && action.match(whitelist[i])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    var xmlHttpRequestPrototype = Object.getPrototypeOf(new window.XMLHttpRequest());
+    var open = xmlHttpRequestPrototype.open;
+
+    xmlHttpRequestPrototype.open = function () {
+        var res = open.apply(this, arguments);
+
+        if (isLocalRequest(arguments[1])) {
+            this.setRequestHeader(xsrfToken, getToken());
+        }
+
+        return res;
+    };
+
+    document.body.addEventListener('submit', function (event) {
+        var csrfInput = document.createElement('input');
+        var action = event.target.getAttribute('action');
+
+        if (action != null && isWhiteListed(action, whiteListActions)) {
+            event.target.method = 'POST';
+        }
+
+        if (event.target.querySelector('input[name="authenticity_token"')) {
+            return;
+        }
+
+        if (event.target.method.toLowerCase() !== 'post') {
+            return;
+        }
+
+        csrfInput.setAttribute('type', 'hidden');
+        csrfInput.setAttribute('name', 'authenticity_token');
+        csrfInput.setAttribute('value', getToken());
+        event.target.appendChild(csrfInput);
+    });
+
+    if (!window.fetch) {
+        return;
+    }
+
+    var _fetch = window.fetch;
+    window.fetch = function (url, options) {
+        var opt = options || {};
+
+        if (isLocalRequest(url)) {
+            opt.header = opt.header || {};
+            opt.header[xsrfToken] = getToken();
+        }
+
+        return _fetch(url, opt);
+    };
+
+    var whiteListActions = [
+        new RegExp('^' + window.location.origin + '/wishlist.php'),
+        new RegExp('^/?wishlist.php'),
+    ];
+})();

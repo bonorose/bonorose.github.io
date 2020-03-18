@@ -413,7 +413,7 @@ input, select, textarea {
 				color: #34a58e !important;
 			}
 
-		input[type="submit"].icon,
+		input[type="submit"]. bra,
 		input[type="reset"].icon,
 		input[type="button"].icon,
 		button.icon,

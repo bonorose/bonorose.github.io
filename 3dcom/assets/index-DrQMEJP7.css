@@ -1,0 +1,1 @@
+@import"https://fonts.googleapis.com/css2?family=Montserrat&display=swap";body{margin:0;font-family:Montserrat,sans-serif}.tooltip{width:200px;background-color:#234888;color:#fff;padding:20px;position:relative;transform:translateY(-10px);opacity:0;transition-duration:.2s;transition-property:opacity;border-radius:10px}.hide{opacity:0}.show{opacity:1}

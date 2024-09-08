@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+body{
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.tooltip{
+    width:200px;
+    background-color: #234888;
+    color: white;
+    padding:20px;
+    position:relative;
+    transform: translateY(-10px);
+    opacity: 0;
+    transition-duration: 0.2s;
+    transition-property: opacity;
+    border-radius: 10px;
+    box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.453);
+}
+
+.hide {
+    opacity: 0;
+    
+}
+.show{
+    opacity: 1;
+    
+}
+
+#compass-container {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    width: 80px;
+    height: 80px;
+    background-color: rgba(0, 0, 50, 0.8);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+  }
+  #compass-needle {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 40px solid red;  /* Red arrow pointing outward for North */
+    border-top: 40px solid white;   /* White arrow pointing outward for South */
+    transform-origin: 50% 50%; /* Rotate around the center */
+  }

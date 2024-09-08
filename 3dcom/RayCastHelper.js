@@ -24,7 +24,7 @@ export function checkRayIntersections(mousePointer, camera, raycaster, scene, ge
                 return intersections[i]
             }
             else{
-                intersections[i].object.material.opacity = 0.75;
+                intersections[i].object.material.opacity = 0.4;
                 return intersections[i]
             }
 

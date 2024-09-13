@@ -48,7 +48,7 @@ scene.environment = pmremGenerator.fromScene(new RoomEnvironment(renderer), 0.04
 let mousePointer = new THREE.Vector2();
 const raycaster = new THREE.Raycaster();
 
-const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 100);
+const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100); // Adjust near and far clipping planes
 camera.position.set(4, 8, 2);
 
 const renderPass = new RenderPass(scene, camera);
@@ -68,49 +68,143 @@ controls.enableDamping = false;
 document.addEventListener('mousemove', onMouseMove, false);
 document.addEventListener('mouseup', onMouseUp, false);
 document.addEventListener('mousedown', onMouseDown, false);
+document.addEventListener('dblclick', onMouseDoubleClick, false);
 
 const labelRenderer = new CSS2DRenderer();
 labelRenderer.setSize(window.innerWidth, window.innerHeight);
 labelRenderer.domElement.style.position = 'absolute';
 labelRenderer.domElement.style.top = '0px';
 labelRenderer.domElement.style.pointerEvents = 'none';
+labelRenderer.domElement.style.zIndex = '10';
 document.body.appendChild(labelRenderer.domElement);
 
-const labelDiv = document.createElement('div');
+const labelDiv = document.getElementById("labelDiv");
 labelDiv.className = 'tooltip';
-labelDiv.style.marginTop = '-1em';
+// labelDiv.style.marginTop = '-1em';
 
-const pApartment = document.createElement('p');
-pApartment.textContent = "1";
-labelDiv.appendChild(pApartment);
+// Top Data
+const labelBodyContainer = document.createElement('div');
+labelBodyContainer.className = 'tooltip-header';
+const pApartment = document.createElement('h2');
+pApartment.textContent = "1 דירה";
+const pFloor = document.createElement('h3');
+pFloor.textContent = "קומה 1";
+const pModel = document.createElement('h3');
+pModel.textContent = "דגם Y.NW";
 
-const pRooms = document.createElement('p');
-pRooms.textContent = "1";
-labelDiv.appendChild(pRooms);
+labelBodyContainer.appendChild(pApartment);
+labelBodyContainer.appendChild(pFloor);
+labelBodyContainer.appendChild(pModel);
 
-const pModel = document.createElement('p');
-pModel.textContent = "A";
-labelDiv.appendChild(pModel);
+// Icons
+const labelIconContainer = document.createElement('div');
+labelIconContainer.className = 'tooltip-icons';
 
-const pFloor = document.createElement('p');
-pFloor.textContent = "Testing";
-labelDiv.appendChild(pFloor);
+const iconItemContainer_1 = document.createElement('div');
+iconItemContainer_1.className = 'icon-item';
 
-const pSize = document.createElement('p');
-pSize.textContent = "Testing";
-labelDiv.appendChild(pSize);
+const pBalcony_icon = document.createElement('img');
+pBalcony_icon.src = '/flower.svg'; // Replace with the actual path
+pBalcony_icon.alt = 'Balcony icon';
+pBalcony_icon.className = 'icon-svg'; // Optional: Add a class for styling
 
-const pBalcony = document.createElement('p');
-pBalcony.textContent = "Testing";
-labelDiv.appendChild(pBalcony);
+const pBalcony_data = document.createElement('p');
+pBalcony_data.textContent = "מרפסת";
 
-const pAvailable = document.createElement('p');
-pAvailable.textContent = "Testing";
-labelDiv.appendChild(pAvailable);
+iconItemContainer_1.appendChild(pBalcony_icon);
+iconItemContainer_1.appendChild(pBalcony_data);
 
-const label = new CSS2DObject(labelDiv);
-label.visible = true;
-scene.add(label);
+const iconItemContainer_2 = document.createElement('div');
+iconItemContainer_2.className = 'icon-item';
+
+const pSize_icon = document.createElement('img');
+pSize_icon.src = '/ruler.svg'; // Replace with the actual path
+pSize_icon.alt = 'Size icon';
+pSize_icon.className = 'icon-svg'; // Optional: Add a class for styling
+
+const pSize_data = document.createElement('p');
+pSize_data.textContent = '138 מ"ר';
+
+iconItemContainer_2.appendChild(pSize_icon);
+iconItemContainer_2.appendChild(pSize_data);
+
+const iconItemContainer_3 = document.createElement('div');
+iconItemContainer_3.className = 'icon-item';
+
+const pBeds_icon = document.createElement('img');
+pBeds_icon.src = '/bed.svg'; // Replace with the actual path
+pBeds_icon.alt = 'Rooms icon';
+pBeds_icon.className = 'icon-svg'; // Optional: Add a class for styling
+
+const pBeds_data = document.createElement('p');
+pBeds_data.textContent = "5 חדרים";
+
+iconItemContainer_3.appendChild(pBeds_icon);
+iconItemContainer_3.appendChild(pBeds_data);
+
+labelIconContainer.appendChild(iconItemContainer_1);
+labelIconContainer.appendChild(iconItemContainer_2);
+labelIconContainer.appendChild(iconItemContainer_3);
+
+// Buttons
+const buttonItemContainer = document.createElement('div');
+buttonItemContainer.className = 'buttons';
+
+{/* <button type="button" class="btn btn-lg btn-outline-danger">
+                <i class="fa fa-bug"></i> Report Bug
+            </button> */}
+
+const visitButton = document.createElement('button');
+visitButton.className = "program-btn";
+visitButton.textContent = "תוכניות דירה";
+
+const floorDataButton = document.createElement('button');
+floorDataButton.className = "tour-btn";
+floorDataButton.textContent = "סיור";
+
+buttonItemContainer.appendChild(visitButton);
+buttonItemContainer.appendChild(floorDataButton);
+
+labelDiv.appendChild(labelBodyContainer);
+labelDiv.appendChild(labelIconContainer);
+labelDiv.appendChild(buttonItemContainer);
+
+
+var visitUrl = "https://example.com/visit";
+var tourUrl = "https://example.com/tour";
+
+// const pApartment = document.createElement('p');
+// pApartment.textContent = "1";
+// labelDiv.appendChild(pApartment);
+
+// const pRooms = document.createElement('p');
+// pRooms.textContent = "1";
+// labelDiv.appendChild(pRooms);
+
+// const pModel = document.createElement('p');
+// pModel.textContent = "A";
+// labelDiv.appendChild(pModel);
+
+// const pFloor = document.createElement('p');
+// pFloor.textContent = "Testing";
+// labelDiv.appendChild(pFloor);
+
+// const pSize = document.createElement('p');
+// pSize.textContent = "Testing";
+// labelDiv.appendChild(pSize);
+
+// const pBalcony = document.createElement('p');
+// pBalcony.textContent = "Testing";
+// labelDiv.appendChild(pBalcony);
+
+// const pAvailable = document.createElement('p');
+// pAvailable.textContent = "";
+// labelDiv.appendChild(pAvailable);
+
+// const label = new CSS2DObject(labelDiv);
+// label.visible = true;
+// label.frustumCulled = false; // Disable frustum culling
+// scene.add(label);
 let data;
 let hover;
 
@@ -122,9 +216,12 @@ let active_apartment = {
   size: "",
   balcony: "",
   availability: "",
+  floorplan_url: "",
+  tour_url: ""
 };
 let isSelected = false;
 let isDragging = false;
+let cameraDistance;
 
 
 document.addEventListener("keydown", onDocumentKeyDown, false);
@@ -198,14 +295,14 @@ if (building == "0") {
         console.error(e);
     });
 } else {
-  loader.load('./scene_building_prod_v2.glb', function (gltf) {
+  loader.load('./scene_building_prod_v5.glb', function (gltf) {
       model = gltf.scene;
       model.position.set(0, -0.1, 0);
       model.scale.set(0.1, 0.1, 0.1);
       model.traverse(function (obj) { obj.frustumCulled = false; });
       scene.add(model);
 
-      Papa.parse("./data_prod.csv", {
+      Papa.parse("./data_prod_updated.csv", {
           delimiter: "",
           newline: "",
           download: true,
@@ -247,39 +344,77 @@ function updateCompass() {
   compassNeedle.style.transform = `rotate(${-compassAngle}deg)`; // Rotate needle (invert direction)
 }
 
+function isLabelVisible() {
+  var frustum = new THREE.Frustum();
+  var cameraViewProjectionMatrix = new THREE.Matrix4();
+
+  camera.updateMatrixWorld(); // Ensure the camera's world matrix is up-to-date
+  camera.matrixWorldInverse.copy(camera.matrixWorld).invert(); // Invert the camera's world matrix
+  cameraViewProjectionMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+  
+  frustum.setFromProjectionMatrix(cameraViewProjectionMatrix);
+
+  // Return true if the label is inside the camera's frustum (should be visible)
+  return frustum.containsPoint(label.position);
+}
+
+function updateLabelPosition() {
+  var vector = new THREE.Vector3(); // Create a new vector for label position
+  var canvas = renderer.domElement; // The canvas you're rendering on
+
+  // Get the object's world position
+  label.getWorldPosition(vector);
+
+  // Project the object's position into screen space
+  vector.project(camera);
+
+  // Calculate the label's screen position
+  var x = (vector.x * 0.5 + 0.5) * canvas.width;
+  var y = -(vector.y * 0.5 - 0.5) * canvas.height;
+
+  // Update the label's CSS position to match the 3D position
+  labelDiv.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`;
+  labelDiv.style.display = "block"; // Ensure the label is always visible
+}
+
 function animate() {
-    if (loading)
-        return;
+  if (loading)
+      return;
 
-    if (smoothReset) doSmoothReset();
+  if (smoothReset) doSmoothReset();
 
-        if (isResetting) smoothResetCamera();
+  if (isResetting) smoothResetCamera();
 
-    camera.updateMatrixWorld();
-    var vec = new THREE.Vector3(); // create once and reuse
-    var pos = new THREE.Vector3(); // create once and reuse
+  camera.updateMatrixWorld();
+  var vec = new THREE.Vector3(); // create once and reuse
+  var pos = new THREE.Vector3(); // create once and reuse
 
-    vec.set(
-        (200 / window.innerWidth) * 2 - 1,
-        -(200 / window.innerHeight) * 2 + 1,
-        0.5,
-    );
+  vec.set(
+      (200 / window.innerWidth) * 2 - 1,
+      -(200 / window.innerHeight) * 2 + 1,
+      0.5,
+  );
 
-    vec.unproject(camera);
+  vec.unproject(camera);
 
-    vec.sub(camera.position).normalize();
+  vec.sub(camera.position).normalize();
 
-    var distance = -camera.position.z / vec.z;
+  var distance = -camera.position.z / vec.z;
+  cameraDistance = distance;
 
-    pos.copy(camera.position).add(vec.multiplyScalar(distance));
-    label.position.set(pos.x, pos.y, pos.z);
+  pos.copy(camera.position).add(vec.multiplyScalar(distance));
+  // label.position.set(pos.x, pos.y, pos.z);
 
-    // Update the compass needle based on camera rotation
-    updateCompass();
+  // Update the compass needle based on camera rotation
+  updateCompass();
 
-    renderer.render(scene, camera);
-    composer.render();
-    labelRenderer.render(scene, camera);
+  // Check if the label is visible
+  // label.visible = isLabelVisible();
+  // updateLabelPosition();
+
+  renderer.render(scene, camera);
+  composer.render();
+  labelRenderer.render(scene, camera);
 }
 
 renderer.setAnimationLoop(animate);
@@ -307,7 +442,7 @@ function setData() {
                                 metalness: 0,
                                 roughness: 0.2,
                                 transparent: true,
-                                opacity: 0.2
+                                opacity: 0.15
                             });
                         } else {
                             baseMaterial = new THREE.MeshStandardMaterial({
@@ -315,7 +450,7 @@ function setData() {
                                 metalness: 0,
                                 roughness: 0.2,
                                 transparent: true,
-                                opacity: 0.2
+                                opacity: 0.15
                             });
                         }
 
@@ -364,7 +499,7 @@ function onMouseMove(event) {
       if (item.name.includes("apart")) {
         if (item.userData.isSelected != true) {
           item.material.transparent = true;
-          item.material.opacity = 0.2;
+          item.material.opacity = 0.15;
         }
       }
     }
@@ -376,30 +511,35 @@ function onMouseMove(event) {
     for (let i = 0; i < data.length; i++) {
       if (intersections.object.name.replace('apartment_', '') === data[i].apartment_id.toString()) {
         ////console.log(data[i])
-        pApartment.textContent = "Apartment: " + data[i].apartment_id;
-        pRooms.textContent = "Rooms: " + data[i].rooms;
-        pModel.textContent = "Model: " + data[i].Model;
-        pFloor.textContent = "Floor: " + data[i].Floor;
-        pSize.textContent = "Size: " + data[i].size + "sqm";
-        pBalcony.textContent = "Balcony: " + data[i].balcony;
-        pAvailable.textContent = "Status: " + data[i].availability;
+        pApartment.textContent = "דירה " + data[i].apartment_id;
+        pBeds_data.textContent = "חדרים: " + data[i].rooms;
+        pModel.textContent = "דגם " + data[i].Model;
+        pFloor.textContent = "קומה: " + data[i].Floor;
+        pSize_data.textContent = "מ״ר " + data[i].size;
+        pBalcony_data.textContent = "מרפסת " + data[i].balcony;
+        // pAvailable.textContent = "Status: " + data[i].availability;
         labelDiv.className = "tooltip show"
         active = true;
+        
+        visitUrl = data[i].floorplan_url;
+        tourUrl = data[i].tour_url;
       }
     }
-  }
-  else if (!active && !isSelected) {
-    labelDiv.className = "tooltip hide"
   } else if (isSelected) {
-    pApartment.textContent = "Apartment: " + active_apartment.apartment_id;
-    pRooms.textContent = "Rooms: " + active_apartment.rooms;
-    pModel.textContent = "Model: " + active_apartment.Model;
-    pFloor.textContent = "Floor: " + active_apartment.Floor;
-    pSize.textContent = "Size: " + active_apartment.size + " sqm";
-    pBalcony.textContent = "Balcony: " + active_apartment.balcony;
-    pAvailable.textContent = "Status: " + active_apartment.availability;
+    pApartment.textContent = "דירה " + active_apartment.apartment_id;
+    pBeds_data.textContent = "חדרים: " + active_apartment.rooms;
+    pModel.textContent = "דגם " + active_apartment.Model;
+    pFloor.textContent = "קומה: " + active_apartment.Floor;
+    pSize_data.textContent = "מ״ר " + active_apartment.size;
+    pBalcony_data.textContent = "מרפסת " + active_apartment.balcony;
+    // pAvailable.textContent = "Status: " + active_apartment.availability;
     labelDiv.className = "tooltip show"
-  }
+    
+    visitUrl = active_apartment.floorplan_url;
+    tourUrl = active_apartment.tour_url;
+  } else if (!active && !isSelected) {
+    labelDiv.className = "tooltip hide"
+  } 
 
 }
 
@@ -421,7 +561,6 @@ window.selectApartment = function (num) {
   model.traverse((item) => {
     if (item.isMesh) {
       if (item.name.includes("apart")) {
-        //label.position.set(0, 0, 0);
         let active = false;
         let i = num - 1;
 
@@ -430,22 +569,20 @@ window.selectApartment = function (num) {
           isSelected = false;
         }
 
-
         if (item.name.replace('apartment_', '') === data[i].apartment_id.toString()) {
           isSelected = true;
           item.userData.isSelected = true;
           item.material.transparent = true;
-          item.material.opacity = 0.4;
+          item.material.opacity = 0.38;
 
           addOutlinesBasedOnIntersections2(item, outlinePass);
-          ////console.log(data[i])
-          pApartment.textContent = "Apartment: " + data[i].apartment_id;
-          pRooms.textContent = "Rooms: " + data[i].rooms;
-          pModel.textContent = "Model: " + data[i].Model;
-          pFloor.textContent = "Floor: " + data[i].Floor;
-          pSize.textContent = "Size: " + data[i].size + " sqm";
-          pBalcony.textContent = "Balcony: " + data[i].balcony;
-          pAvailable.textContent = "Status: " + data[i].availability;
+          pApartment.textContent = "דירה " + data[i].apartment_id;
+          pBeds_data.textContent = "חדרים: " + data[i].rooms;
+          pModel.textContent = "דגם: " + data[i].Model;
+          pFloor.textContent = "קומה: " + data[i].Floor;
+          pSize_data.textContent = "מ״ר " + data[i].size;
+          pBalcony_data.textContent = "מרפסת " + data[i].balcony;
+          // pAvailable.textContent = "Status: " + data[i].availability;
           labelDiv.className = "tooltip show"
 
           active_apartment.apartment_id = data[i].apartment_id;
@@ -455,26 +592,17 @@ window.selectApartment = function (num) {
           active_apartment.size = data[i].size;
           active_apartment.balcony = data[i].balcony;
           active_apartment.availability = data[i].availability;
+          active_apartment.floorplan_url = data[i].floorplan_url;
+          active_apartment.tour_url = data[i].tour_url;
+
+          visitUrl = data[i].floorplan_url;
+          tourUrl = data[i].tour_url;
 
           active = true;
-          var center = new THREE.Vector3();
-          center = new THREE.Vector3(item.position.x, item.position.y, item.position.z);
-
+          
+          // Set the camera's target based on the origin point
           smoothReset = true;
 
-          const angle = Math.atan2(center.z, center.x);
-
-          if (center.x >= 0 && center.z >= 0) {
-            targetAngle = 2;
-          } else if (center.x >= 0 && center.z < 0) {
-
-            targetAngle = 1.2;
-
-          } else if (center.x < 0 && center.z >= 0) {
-            targetAngle = -1.5;
-          } else if (center.x < 0 && center.z < 0) {
-            targetAngle = -1.2;
-          }
         }
       }
     }
@@ -491,8 +619,8 @@ function calculateAngleBetweenVectors(a, b) {
 function radiansToDegrees(radians) {
   return radians * 180 / Math.PI
 }
-let mouseMoved = false;
 
+let mouseMoved = false;
 
 function onMouseDown(event) {
 
@@ -518,8 +646,6 @@ function onMouseUp(event) {
   mousePointer = getMouseVector2(event, window);
 
   const getFirstValue = true;
-
-
   const intersections = checkRayIntersections(mousePointer, camera, raycaster, scene, getFirstValue, true);
 
   if (!intersections)
@@ -527,73 +653,70 @@ function onMouseUp(event) {
   if (!intersections.object.name.includes("apart"))
     return;
   addOutlinesBasedOnIntersections(intersections, outlinePass);
-  var origin = new THREE.Vector3();
   var center = new THREE.Vector3();
 
-
-
   if (parent) {
-    //console.log(intersections.object.name);
     let concat = intersections.object.name.replace('apartment_', '')
-    //console.log(concat)
     parent.selectApartment(concat);
-
-
   }
-  //  intersections.object.geometry.boundingBox.getCenter(center);
-  //intersections.object.localToWorld( center );
+
+  intersections.object.geometry.boundingBox.getCenter(center);
+  intersections.object.localToWorld( center );
   ////console.log(intersections.object)
   center = new THREE.Vector3(intersections.object.position.x, intersections.object.position.y, intersections.object.position.z);
   //center = center.normalize()
-
-
   smoothReset = true;
 
 
-  const xDist = center.x;
-  const zDist = center.z;
-  const angle = -Math.atan2(center.x, center.y);
+  // const xDist = center.x;
+  // const zDist = center.z;
+  // const angle = -Math.atan2(center.x, center.y);
 
 
   var dir = new THREE.Vector3();
   dir = dir.angleTo(center)
-  // //console.log(center)
-  ////console.log(dir)
-  // dir.subVectors(new THREE.Vector3(), intersections.geometry.boundingSphere.center);
-  //dir = dir.normalize()
-  //-1903 17 2
-  //-1901  -294 1.2
-  //-1106 17 -1.2
-  //-1106 -294
 
   if (center.x >= 0 && center.z >= 0) {
-    targetAngle = 2;
-  } else if (center.x >= 0 && center.z < 0) {
-
     targetAngle = 1.2;
-
-  } else if (center.x < 0 && center.z >= 0) {
-    targetAngle = -2;
+  } else if (center.x >= 0 && center.z < 0) {
+    targetAngle = 2.2;
+  } else if (center.x < 0 && center.z >= 0 && center.z < 0.5) {
+    targetAngle = -1.6;
+  } else if (center.x < 0 && center.z >= 0.8) {
+    targetAngle = -0.7;
   } else if (center.x < 0 && center.z < 0) {
-    targetAngle = -1.2;
+    targetAngle = -2.2;
   }
 
-  //targetAngle = -2;//  Math.atan(center.x, center.z)
-
-
-
   return
+}
 
-  var dir = new THREE.Vector3();
-  //console.log(intersections.geometry.boundingSphere.center)
-  dir.subVectors(new THREE.Vector3(), intersections.geometry.boundingSphere.center);
-  //console.log(dir.normalize())
-  dir = dir.normalize();
-  camera.position.x = dir.x * -10;
-  camera.position.y = dir.y;
-  camera.position.z = dir.z * 10;
-  controls.update();
+function onMouseDoubleClick(event) {
 
+  if (loading || isDragging)
+    return;
+
+
+  model.traverse((item) => {
+    if (item.isMesh) {
+      if (item.name.includes("apart") && item.name.includes(active_apartment.apartment_id)) {
+          item.userData.isSelected = false;
+          isSelected = false;
+          isDragging = false;
+          active_apartment.apartment_id = null;
+          active_apartment.rooms = null;
+          active_apartment.Model = null;
+          active_apartment.Floor = null;
+          active_apartment.size = null;
+          active_apartment.balcony = null;
+          active_apartment.availability = null;
+          removeOutlines(outlinePass);
+      }
+    }
+  });
+
+  resetTargetAngle = 0; // Set the target angle to 0 (North)
+  isResetting = true;   // Start the reset process
 
 }
 
@@ -608,6 +731,28 @@ let isResetting = false;  // Flag to indicate if resetting is in progress
 document.getElementById("compass-container").addEventListener("click", function () {
     resetTargetAngle = 0; // Set the target angle to 0 (North)
     isResetting = true;   // Start the reset process
+});
+
+// Dynamically add a URL to the visit button
+visitButton.addEventListener('click', function() {
+  window.open(visitUrl, '_blank'); // Use dynamic variable
+});
+
+
+// // Dynamically add a URL to the floor tour button
+// floorDataButton.addEventListener('click', function() {
+//   window.location.href = tourUrl; // Use dynamic variable
+// });
+
+// Add the event listener to open the modal when the button is clicked
+floorDataButton.addEventListener('click', function() {
+  // Set the iframe source dynamically (replace with your actual URL)
+  const iframe = document.getElementById('iframePopup');
+  iframe.src = tourUrl; // Set the URL you want in the iframe
+  
+  // Trigger the Bootstrap modal
+  const modal = new bootstrap.Modal(document.getElementById('iframeModal'));
+  modal.show();
 });
 
 // Smoothly reset the camera's rotation
@@ -635,26 +780,34 @@ function smoothResetCamera() {
 }
 
 function doSmoothReset() {
-  // get current angles
-  var alpha = controls.getAzimuthalAngle();
+// Function for linear interpolation
+function lerp(start, end, t) {
+  return start + t * (end - start);
+}
 
+// Get current azimuthal angle
+var alpha = controls.getAzimuthalAngle();
 
+// Smooth change using manual lerp
+controls.minAzimuthAngle = lerp(alpha, targetAngle, 0.1);
+controls.maxAzimuthAngle = controls.minAzimuthAngle;
+controls.update();
 
-  // smooth change using manual lerp
-  controls.minAzimuthAngle = lerp(alpha, targetAngle, 0.1);
-  controls.maxAzimuthAngle = controls.minAzimuthAngle;
-  controls.update()
-  // if they are close to the reset values, just set these values
-  if (alpha < targetAngle + 0.01 && alpha > targetAngle - 0.01) {
-    alpha = targetAngle;
-    smoothReset = false;
+// Check if current angle is close enough to the target angle
+const tolerance = 0.01; // Define a tolerance for floating-point comparison
+if (Math.abs(alpha - targetAngle) < tolerance) {
+  alpha = targetAngle; // Snap to target angle
+  smoothReset = false;
 
-    controls.minAzimuthAngle = Infinity;
-    controls.maxAzimuthAngle = Infinity;
-    controls.update()
-  }
-  // if the reset values are reached, exit smooth reset
-  if (alpha == 0.5) onStart()
+  controls.minAzimuthAngle = Infinity;
+  controls.maxAzimuthAngle = Infinity;
+  controls.update();
+}
+
+// Check if we need to exit smooth reset
+if (Math.abs(alpha - 0.5) < tolerance) {
+  onStart();
+}
 }
 
 function onStart(event) {

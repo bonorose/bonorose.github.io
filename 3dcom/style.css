@@ -5,7 +5,8 @@ body{
     font-family: 'Montserrat', sans-serif;
 }
 
-.tooltip{
+/* OLD */
+/* .tooltip{
     width:200px;
     background-color: #234888;
     color: white;
@@ -17,7 +18,132 @@ body{
     transition-property: opacity;
     border-radius: 10px;
     box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.453);
+} */
+
+.tooltip {
+    width:320px;
+    min-height: 260px;
+    background: #222220CC;
+       /* Flexbox layout */
+       display: flex;
+       flex-direction: column;
+       justify-content: space-between;
+    margin-top: -1em;
+    color: white;
+    padding:10px;
+    position:relative;
+    transform: translateY(-10px);
+    opacity: 0;
+    transition-duration: 0.2s;
+    transition-property: opacity;
+    border: 1px solid #717171;
+    border-radius: 16px;
+    box-shadow: 0px 9px 4.4px 0px #00000040;
+    z-index: 1;
 }
+
+  
+  .tooltip-header {
+    display: flex;
+    flex-direction: column; /* Change to column to stack vertically */
+    align-items: flex-end;
+    justify-content: space-between;
+    top:0px;
+    right:0px;
+  }
+  
+  
+  h2 {
+    font-family: 'Inter';
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 29.05px;
+    text-align: right;
+    margin:0px;
+  }
+
+  h3 {
+    font-family: 'Inter';
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 19.36px;
+    text-align: right;
+    margin:0px;    
+  }
+
+  .tooltip-icons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    gap: 10px;
+  }
+  
+  .icon-item {
+    display: flex;
+    align-items: center; /* Align icons and text vertically */
+    padding: 5px;
+    background: #20201F;
+    border: 1px solid #6E6E6E;
+    border-radius: 8px;
+    min-height: 58px;
+    min-width: 60px;
+    width: 30%; /* Each icon-item will take up 30% of the row */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center content vertically */
+    align-items: center;     /* Center content horizontally */
+  }
+
+  .icon-svg {
+    width: 24px; /* Adjust the size of the icon */
+    height: 24px;
+    margin-bottom: 5px; /* Adds space between icon and text */
+}
+  
+
+  
+  .icon-item p {
+    margin: 0;
+    font-size: 14px;
+  }
+  
+  
+  .icon-item i {
+    display: block;
+    font-size: 20px;
+    margin-bottom: 5px;
+  }
+  
+  .buttons {
+    display: flex;
+    justify-content: space-between; /* Space the buttons across the row */
+    gap: 10px; /* Add space between the buttons */
+    margin-top: 20px;
+    width: 100%; /* Ensure the buttons container takes the full width */
+  }
+  
+  button {
+    flex-grow: 1; /* Make each button expand to fill available space */
+    background: #20201F;
+    border: 1px solid #6E6E6E;
+    border-radius: 8px;
+    color: white;
+    padding: 10px 15px;
+    cursor: pointer;
+    text-align: center;
+  }
+  
+  button:hover {
+    background-color: #555;
+  }
+  
+  button:not(:last-child) {
+    margin-right: 10px; /* Space between buttons, if gap doesn't work in your setup */
+  }
+
+
 
 .hide {
     opacity: 0;
@@ -26,6 +152,12 @@ body{
 .show{
     opacity: 1;
     
+}
+
+#labelDiv {
+    position: absolute;
+    top: 40px;
+    left: 20px;
 }
 
 #compass-container {

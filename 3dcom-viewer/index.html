@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite App</title>
+    <script>
+        function selectApartment(num) {
+            console.log("Parent = " + num);
+            const text = document.getElementById("apart");
+            text.textContent = num;
+        }
+
+        function selectApartmentChild(num) {
+            const child = document.getElementById("building");
+            console.log(num);
+            console.log(child);
+            child.selectApartment(num)
+            const text = document.getElementById("apart");
+            text.textContent = num;
+        }
+
+    </script>
+</head>
+
+<body>
+
+    <div id="container"></div>
+    <iframe id="building" src="index_v1.html" title="Building Test" width="1024" height="768"></iframe>
+    <div>
+        <button onclick="selectApartmentChild(1)">Select Apartment 1</button>
+    </div>
+
+    <div>
+        <button onclick="selectApartmentChild(2)">Select Apartment 2</button>
+    </div>
+    <div>
+        <button onclick="selectApartmentChild(3)">Select Apartment 3</button>
+    </div> 
+    <div>
+        <button onclick="closeApartment(3)">Close Apartment</button>
+    </div> 
+    <div>
+        <button onclick="loadBuilding()">Load from S3</button>
+    </div>
+
+    <div>
+        Selected Apartment:  <span id="apart"></span>
+    </div>
+</body>
+<script>
+
+function selectApartmentChild(num) {
+        const child = document.getElementById("building");
+        child.contentWindow.selectApartment(num)
+    }
+function closeApartment(num) {
+        const child = document.getElementById("building");
+        child.contentWindow.closeApartment()
+    }
+
+
+    function loadBuilding() {
+        const child = document.getElementById("building");
+        child.contentWindow.loadBuilding({glb:'https://dxqif248k0gu9.cloudfront.net/house4.glb', csv:'https://dxqif248k0gu9.cloudfront.net/data.csv'});
+    }
+
+</script>
+</html>

@@ -10,40 +10,152 @@ import { DRACOLoader } from './DRACOLoader.js';
 import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 
+import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+import { SSAOPass } from 'three/examples/jsm/postprocessing/SSAOPass.js';
+
 import { lerp } from 'three/src/math/MathUtils.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import Papa from 'papaparse';
 import { EffectComposer, RenderPass, ShaderPass, UnrealBloomPass } from 'three/examples/jsm/Addons.js';
-import { getOutlineEffect, configureOutlineEffectSettings_Default, addOutlinesBasedOnIntersections, addOutlinesBasedOnIntersections2, removeOutlines } from './OutlineHelper.js';
+import { getOutlineEffect, configureOutlineEffectSettings_Default, configureOutlineEffectSettings_Hover, addOutlinesBasedOnIntersections, addOutlinesBasedOnIntersections2, addOutlinesBasedOnIntersections_hover, removeOutlines } from './OutlineHelper.js';
 import { GammaCorrectionShader } from 'three/addons/shaders/GammaCorrectionShader.js';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+import { EXRLoader } from 'three/examples/jsm/Addons.js';
 
 let loading = true;
+const urlParams = new URLSearchParams(window.location.search);
+
+let exrCubeRenderTarget;
+let exrBackground;
 
 const scene = new THREE.Scene();
 
-new RGBELoader().load('bg_1k.hdr', function (texture) {
-    texture.mapping = THREE.EquirectangularReflectionMapping;
-    scene.environment = texture;
-});
-
+// Renderer Setup
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 
-// Adding tone mapping
+// Setup the renderer with PMREM support
+renderer.physicallyCorrectLights = true;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 2;
+renderer.toneMappingExposure = 1.25; // Slight exposure increase for a soft white look
+renderer.outputEncoding = THREE.ACESFilmicToneMapping;
+renderer.antialias = true;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;  // High-quality soft shadows
+
 
 container.appendChild(renderer.domElement);
 
+let model;
 let composer = new EffectComposer(renderer);
 
+// Use PMREM for smooth environment lighting
 const pmremGenerator = new THREE.PMREMGenerator(renderer);
-let model;
+pmremGenerator.compileEquirectangularShader();
 
-scene.background = new THREE.Color(0xefefef);
-scene.environment = pmremGenerator.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+let hdri_texture;
+
+
+const hdri = urlParams.get('hdri');
+let material_sky;
+
+// function loadEXRTexture(url) {
+//   return new Promise((resolve, reject) => {
+//     new EXRLoader().load(url, (texture) => {
+//       texture.mapping = THREE.EquirectangularReflectionMapping;
+//       texture.minFilter = THREE.LinearFilter;
+//       texture.magFilter = THREE.LinearFilter;
+//       texture.encoding = THREE.LinearEncoding;
+
+//       const pmremGenerator = new THREE.PMREMGenerator(renderer);
+//       pmremGenerator.compileEquirectangularShader();
+
+//       const exrCubeRenderTarget = pmremGenerator.fromEquirectangular(texture);
+
+//       scene.environment = exrCubeRenderTarget.texture;
+//       resolve({ texture, exrCubeRenderTarget });
+//     }, undefined, (error) => {
+//       reject(error);
+//     });
+//   });
+// }
+
+// const { texture } = await loadEXRTexture('kloofendal_48d_partly_cloudy_puresky_2k.exr');
+new EXRLoader().load( 'kloofendal_48d_partly_cloudy_puresky_2k.exr', function ( texture ) {
+
+  texture.mapping = THREE.EquirectangularReflectionMapping;
+  texture.minFilter = THREE.LinearFilter; // Ensure proper filtering for the texture
+  texture.magFilter = THREE.LinearFilter;
+  texture.encoding = THREE.LinearEncoding; // EXR typically uses linear encoding
+
+
+  const pmremGenerator = new THREE.PMREMGenerator(renderer);
+  pmremGenerator.compileEquirectangularShader();
+
+  const exrCubeRenderTarget = pmremGenerator.fromEquirectangular(texture);
+
+  scene.environment = exrCubeRenderTarget.texture;
+  hdri_texture = exrCubeRenderTarget.texture;
+
+// Create the sky material
+material_sky = new THREE.MeshBasicMaterial({
+  map: texture, // Use the HDRI texture as the skydome material
+  side: THREE.BackSide
+});
+
+// Test if working
+if (hdri == 1) {
+  scene.background = texture;
+} else if (hdri==2) {
+  // Create the skydome geometry and material
+const geometry2 = new THREE.SphereGeometry(
+  25,       // Radius
+  50,      // Width segments
+  50,      // Height segments
+  // 0,        // phiStart: 0 means start at the default position
+  // Math.PI * 2, // phiLength: Full circle in the horizontal direction
+  // 0,        // thetaStart: Start at the top
+  // Math.PI / 2 // thetaLength: Only the top half of the sphere (cut at the equator)
+);
+geometry2.scale(1, 1, 1); // Invert the sphere to view from inside
+
+const skydome = new THREE.Mesh(geometry2, material_sky);
+skydome.position.set(0, 0, 0);
+scene.add(skydome);
+
+// Set up a clipping plane to cut the sphere
+const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 1); // Normal pointing upwards
+renderer.clippingPlanes = [plane]; // Set the clipping planes for the renderer
+renderer.localClippingEnabled = true; // Enable local clipping
+} else {
+  // Set a soft, white studio-like background
+  scene.background = new THREE.Color(0xf8f8f8); // Light gray or white for soft backdrop
+}
+} );
+
+const progressBar = document.getElementById('progress-bar');
+const progressText = document.getElementById('progress-text');
+
+const loadingManager = new THREE.LoadingManager();
+loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
+    const percentComplete = (itemsLoaded / itemsTotal) * 100;
+    progressBar.style.width = percentComplete + '%';
+    progressText.textContent = `Loading... ${Math.round(percentComplete)}%`;
+};
+
+// Hide the progress bar once all resources are loaded
+loadingManager.onLoad = () => {
+    setTimeout(() => {
+        document.getElementById('progress-bar-container').style.display = 'none';
+    }, 500);
+};
+
+
+// Create diffused studio-like lighting
+const hemiLight = new THREE.HemisphereLight( 0x0000ff, 0x00ff00, 2.6 ); 
+// hemisphereLight.position.set(400, 80, 200);
+scene.add(hemiLight);
 
 let mousePointer = new THREE.Vector2();
 const raycaster = new THREE.Raycaster();
@@ -51,19 +163,138 @@ const raycaster = new THREE.Raycaster();
 const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100); // Adjust near and far clipping planes
 camera.position.set(4, 8, 2);
 
+
+const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(128);
+const cubeCamera = new THREE.CubeCamera(1, 1000, cubeRenderTarget);
+scene.add(cubeCamera);
+
+// SSAO Pass
+const ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
+ssaoPass.kernelRadius = 20;  // Adjust to control the softness of the shadows
+composer.addPass(ssaoPass);
+
+
+// 
+// Add GridHelper for the floor
+const gridHelper = new THREE.GridHelper(50, 40);
+scene.add(gridHelper);
+
+// Create a compass with smaller, same-colored arrows
+const arrowSize = 4;  // Smaller arrow size
+const origin = new THREE.Vector3(0, 0, 0);  // Center at origin
+
+// X-axis for East
+const eastDir = new THREE.Vector3(1, 0, 0);  // Points along X-axis
+const eastArrow = new THREE.ArrowHelper(eastDir, origin, arrowSize, 0x0ff000);
+scene.add(eastArrow);
+
+// Z-axis for North
+const northDir = new THREE.Vector3(0, 0, 1);  // Points along Z-axis
+const northArrow = new THREE.ArrowHelper(northDir, origin, arrowSize, 0xff0000);
+scene.add(northArrow);
+
+// -Z-axis for South
+const southDir = new THREE.Vector3(0, 0, -1);  // Points along -Z-axis
+const southArrow = new THREE.ArrowHelper(southDir, origin, arrowSize, 0x00ff00);
+scene.add(southArrow);
+
+// -X-axis for West
+const westDir = new THREE.Vector3(-1, 0, 0);  // Points along -X-axis
+const westArrow = new THREE.ArrowHelper(westDir, origin, arrowSize, 0x0000ff);
+scene.add(westArrow);
+
+function createTextSprite(text, color) {
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  context.font = '40px Arial';
+  context.fillStyle = color;
+  context.fillText(text, 0, 40);  // Draw text on the canvas
+
+  const texture = new THREE.CanvasTexture(canvas);
+  const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+  const sprite = new THREE.Sprite(spriteMaterial);
+  sprite.scale.set(2, 1, 1);  // Adjust the size of the sprite
+
+  return sprite;
+}
+
+// Create sprites for each direction
+const eastSprite = createTextSprite('E', 'white');
+eastSprite.position.set(4, 0, 0);  // Position near the east arrow
+scene.add(eastSprite);
+
+const northSprite = createTextSprite('N', 'white');
+northSprite.position.set(0, 0, 4);  // Position near the north arrow
+scene.add(northSprite);
+
+const southSprite = createTextSprite('S', 'white');
+southSprite.position.set(0, 0, -4);  // Position near the south arrow
+scene.add(southSprite);
+
+const westSprite = createTextSprite('W', 'white');
+westSprite.position.set(-4, 0, 0);  // Position near the west arrow
+scene.add(westSprite);
+
+// Raycaster for detecting clicks
+const mouse = new THREE.Vector2();
+
+// List of arrows for easier raycasting checks
+const arrows = [eastArrow, northArrow, southArrow, westArrow];
+
+
+// Update the cube camera to reflect changes in the scene
+cubeCamera.update(renderer, scene);
+
 const renderPass = new RenderPass(scene, camera);
 composer.addPass(renderPass);
+
 let outlinePass = getOutlineEffect(window, scene, camera);
 configureOutlineEffectSettings_Default(outlinePass);
 composer.addPass(outlinePass);
-const gammaCorrection = new ShaderPass(GammaCorrectionShader);
-composer.addPass(gammaCorrection);
+
+let outlinePassHover = getOutlineEffect(window, scene, camera);
+configureOutlineEffectSettings_Hover(outlinePassHover);
+composer.addPass(outlinePassHover);
+
+// const gammaCorrection = new ShaderPass(GammaCorrectionShader);
+// composer.addPass(gammaCorrection);
+
+
+// Create the render target size for bloom
+const bloomParams = {
+  strength: 1.5,      // Bloom intensity (increase for more glow)
+  radius: 0.4,        // Bloom radius (blur spread)
+  threshold: 30     // Threshold: Only pixels above this brightness are bloomed
+};
+
+// Add UnrealBloomPass
+const bloomPass = new UnrealBloomPass(
+  new THREE.Vector2(window.innerWidth, window.innerHeight), // Size
+  bloomParams.strength,
+  bloomParams.radius,
+  bloomParams.threshold
+);
+composer.addPass(bloomPass);
 
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.target.set(0, 2.5, 0);
+controls.target.set(0, 2, 0);
 controls.update();
 controls.enablePan = true;
-controls.enableDamping = false;
+controls.enableDamping = true;  // Enables smooth motion
+controls.dampingFactor = 0.05;  // Adjust damping for a more natural feel
+controls.minDistance = 4;   // Minimum distance from the target (zoom in limit)
+controls.maxDistance = 10;  // Maximum distance from the target (zoom out limit)
+controls.minPolarAngle = Math.PI / 4;  // Limit upward view (0 is straight up)
+controls.maxPolarAngle = Math.PI / 2;  // Limit downward view (Math.PI is straight down)
+controls.rotateSpeed = 1.0;  // Default is 1, you can increase or decrease it
+controls.zoomSpeed = 1.2;  // Increases the zoom responsiveness
+controls.enableRotate = true;  // Allow rotation
+controls.enableZoom = true;    // Allow zooming
+// controls.autoRotate = true;       // Enable auto-rotation
+// controls.autoRotateSpeed = 2.0;   // Adjust auto-rotate speed (default is 2)
+
+
+
 
 document.addEventListener('mousemove', onMouseMove, false);
 document.addEventListener('mouseup', onMouseUp, false);
@@ -78,9 +309,10 @@ labelRenderer.domElement.style.pointerEvents = 'none';
 labelRenderer.domElement.style.zIndex = '10';
 document.body.appendChild(labelRenderer.domElement);
 
+
+// Tooltip
 const labelDiv = document.getElementById("labelDiv");
 labelDiv.className = 'tooltip';
-// labelDiv.style.marginTop = '-1em';
 
 // Top Data
 const labelBodyContainer = document.createElement('div');
@@ -150,17 +382,37 @@ labelIconContainer.appendChild(iconItemContainer_3);
 const buttonItemContainer = document.createElement('div');
 buttonItemContainer.className = 'buttons';
 
-{/* <button type="button" class="btn btn-lg btn-outline-danger">
-                <i class="fa fa-bug"></i> Report Bug
-            </button> */}
-
+// Create Visit Button
 const visitButton = document.createElement('button');
 visitButton.className = "program-btn";
-visitButton.textContent = "תוכניות דירה";
 
+// Create an img element for the icon
+const visitIcon = document.createElement('img');
+visitIcon.src = '/plan.svg'; // Replace with actual path to the SVG file
+visitIcon.alt = 'Visit Icon';
+visitIcon.className = 'icon'; // Optional class for styling
+
+// Append the icon and text to the button
+visitButton.appendChild(document.createTextNode(" תוכניות דירה ")); // Add a space before the text
+visitButton.appendChild(visitIcon);
+
+// Create Floor Data Button
 const floorDataButton = document.createElement('button');
 floorDataButton.className = "tour-btn";
-floorDataButton.textContent = "סיור";
+
+// Create an img element for the icon
+const tourIcon = document.createElement('img');
+tourIcon.src = '/arrow.svg'; // Replace with actual path to the SVG file
+tourIcon.alt = 'Tour Icon';
+tourIcon.className = 'icon'; // Optional class for styling
+
+// Append the icon and text to the button
+floorDataButton.appendChild(document.createTextNode(" סיור ")); // Add a space before the text
+floorDataButton.appendChild(tourIcon);
+
+// Append buttons to the DOM (Example)
+document.body.appendChild(visitButton);
+document.body.appendChild(floorDataButton);
 
 buttonItemContainer.appendChild(visitButton);
 buttonItemContainer.appendChild(floorDataButton);
@@ -173,40 +425,7 @@ labelDiv.appendChild(buttonItemContainer);
 var visitUrl = "https://example.com/visit";
 var tourUrl = "https://example.com/tour";
 
-// const pApartment = document.createElement('p');
-// pApartment.textContent = "1";
-// labelDiv.appendChild(pApartment);
-
-// const pRooms = document.createElement('p');
-// pRooms.textContent = "1";
-// labelDiv.appendChild(pRooms);
-
-// const pModel = document.createElement('p');
-// pModel.textContent = "A";
-// labelDiv.appendChild(pModel);
-
-// const pFloor = document.createElement('p');
-// pFloor.textContent = "Testing";
-// labelDiv.appendChild(pFloor);
-
-// const pSize = document.createElement('p');
-// pSize.textContent = "Testing";
-// labelDiv.appendChild(pSize);
-
-// const pBalcony = document.createElement('p');
-// pBalcony.textContent = "Testing";
-// labelDiv.appendChild(pBalcony);
-
-// const pAvailable = document.createElement('p');
-// pAvailable.textContent = "";
-// labelDiv.appendChild(pAvailable);
-
-// const label = new CSS2DObject(labelDiv);
-// label.visible = true;
-// label.frustumCulled = false; // Disable frustum culling
-// scene.add(label);
 let data;
-let hover;
 
 let active_apartment = {
   apartment_id: "",
@@ -221,8 +440,6 @@ let active_apartment = {
 };
 let isSelected = false;
 let isDragging = false;
-let cameraDistance;
-
 
 document.addEventListener("keydown", onDocumentKeyDown, false);
 function onDocumentKeyDown(event) {
@@ -244,137 +461,203 @@ const ktx2Loader = new KTX2Loader()
     .setTranscoderPath('jsm/libs/basis/')
     .detectSupport(renderer);
 
-const loader = new GLTFLoader();
+const loader = new GLTFLoader(loadingManager);
 loader.setCrossOrigin('anonymous');
 loader.setKTX2Loader(ktx2Loader);
 loader.setMeshoptDecoder(MeshoptDecoder);
 
-const urlParams = new URLSearchParams(window.location.search);
 const building = urlParams.get('building');
+const load_model = urlParams.get('load_model');
+if(load_model==1){
+  if (building == "0") {
+      loader.load('./house7.glb', function (gltf) {
+          model = gltf.scene;
+          model.position.set(0, -0.1, 0);
+          model.scale.set(0.1, 0.1, 0.1);
+          model.traverse(function (obj) { obj.frustumCulled = false; });
+          scene.add(model);
 
-if (building == "0") {
-    loader.load('./house7.glb', function (gltf) {
-        model = gltf.scene;
-        model.position.set(0, -0.1, 0);
-        model.scale.set(0.1, 0.1, 0.1);
-        model.traverse(function (obj) { obj.frustumCulled = false; });
-        scene.add(model);
-
-        Papa.parse("./data.csv", {
-            delimiter: "",
-            newline: "",
-            download: true,
-            header: true,
-            complete: function (results) {
-                data = results.data;
-                setData();
-            }
-        });
-    }, undefined, function (e) {
-        console.error(e);
-    });
-} else if (building == "1") {
-    loader.load('./scene_newBuilding_v2.glb', function (gltf) {
-        model = gltf.scene;
-        model.position.set(0, -0.1, 0);
-        model.scale.set(0.1, 0.1, 0.1);
-        model.traverse(function (obj) { obj.frustumCulled = false; });
-        scene.add(model);
-
-        Papa.parse("./datav2.csv", {
-            delimiter: "",
-            newline: "",
-            download: true,
-            header: true,
-            complete: function (results) {
-                data = results.data;
-                setData();
-            }
-        });
-    }, undefined, function (e) {
-        console.error(e);
-    });
-} else {
-  loader.load('./scene_building_prod_v5.glb', function (gltf) {
-      model = gltf.scene;
-      model.position.set(0, -0.1, 0);
-      model.scale.set(0.1, 0.1, 0.1);
-      model.traverse(function (obj) { obj.frustumCulled = false; });
-      scene.add(model);
-
-      Papa.parse("./data_prod_updated.csv", {
-          delimiter: "",
-          newline: "",
-          download: true,
-          header: true,
-          complete: function (results) {
-              data = results.data;
-              setData();
-          }
+          Papa.parse("./data.csv", {
+              delimiter: "",
+              newline: "",
+              download: true,
+              header: true,
+              complete: function (results) {
+                  data = results.data;
+                  setData();
+              }
+          });
+      }, undefined, function (e) {
+          console.error(e);
       });
-  }, undefined, function (e) {
-      console.error(e);
-  });
-}
+  } else if (building == "1") {
+      loader.load('./scene_newBuilding_v2.glb', function (gltf) {
+          model = gltf.scene;
+          model.position.set(0, -0.1, 0);
+          model.scale.set(0.1, 0.1, 0.1);
+          model.traverse(function (obj) { obj.frustumCulled = false; });
+          scene.add(model);
 
+          Papa.parse("./datav2.csv", {
+              delimiter: "",
+              newline: "",
+              download: true,
+              header: true,
+              complete: function (results) {
+                  data = results.data;
+                  setData();
+              }
+          });
+      }, undefined, function (e) {
+          console.error(e);
+      });
+  } else if (building == "2") {
+    loader.load('./scene_building_prod_v6.glb', function (gltf) {
+        model = gltf.scene;
+        model.position.set(0, -0.1, 0);
+        model.scale.set(0.1, 0.1, 0.1);
+        model.traverse(function (obj) { obj.frustumCulled = false; });
+        scene.add(model);
 
-// Get the compass needle element
-const compassNeedle = document.getElementById("compass-needle");
+        Papa.parse("./data_prod_updated.csv", {
+            delimiter: "",
+            newline: "",
+            download: true,
+            header: true,
+            complete: function (results) {
+                data = results.data;
+                setData();
+            }
+        });
+    }, undefined, function (e) {
+        console.error(e);
+    });
+  } else if (building == "3") {
+    loader.load('./scene_building_prod_v5.glb', function (gltf) {
+        model = gltf.scene;
+        model.position.set(0, -0.1, 0);
+        model.scale.set(0.1, 0.1, 0.1);
+        model.traverse(function (obj) { obj.frustumCulled = false; });
+        scene.add(model);
 
-// Helper function to calculate the angle between the camera's direction and the North
-function getCameraCompassAngle() {
-  const cameraDirection = new THREE.Vector3();
-  camera.getWorldDirection(cameraDirection);
+        Papa.parse("./data_prod_updated.csv", {
+            delimiter: "",
+            newline: "",
+            download: true,
+            header: true,
+            complete: function (results) {
+                data = results.data;
+                setData();
+            }
+        });
+    }, undefined, function (e) {
+        console.error(e);
+    });
+  } else if (building == "4") {
+    loader.load('./building.glb', function (gltf) {
+        model = gltf.scene;
+        model.position.set(0, -0.1, 0);
+        model.scale.set(0.1, 0.1, 0.1);
+        model.traverse(function (obj) { obj.frustumCulled = false; });
+        scene.add(model);
 
-  // Calculate the angle in the XZ plane
-  const angle = Math.atan2(cameraDirection.x, cameraDirection.z); // Yaw angle in radians
-  let degrees = THREE.MathUtils.radToDeg(angle); // Convert to degrees
+        Papa.parse("./data_prod_updated.csv", {
+            delimiter: "",
+            newline: "",
+            download: true,
+            header: true,
+            complete: function (results) {
+                data = results.data;
+                setData();
+            }
+        });
+    }, undefined, function (e) {
+        console.error(e);
+    });
+  }else {
+    loader.load('./ExportV6.glb', function (gltf) {
+        model = gltf.scene;
+        model.position.set(0, -0.1, 0);
+        model.scale.set(0.1, 0.1, 0.1);
+        model.traverse(function (obj) { obj.frustumCulled = false; });
+        scene.add(model);
 
-  if (degrees < 0) {
-    degrees = 360 + degrees; // Normalize to 0-360 range
+        Papa.parse("./data_prod_updated_v2.csv", {
+            delimiter: "",
+            newline: "",
+            download: true,
+            header: true,
+            complete: function (results) {
+                data = results.data;
+                setData();
+            }
+        });
+    }, undefined, function (e) {
+        console.error(e);
+    });
+  }
   }
 
-  return degrees;
-}
+// Get the compass needle element
+// const compassNeedle = document.getElementById("compass-needle");
+
+// Helper function to calculate the angle between the camera's direction and the North
+// function getCameraCompassAngle() {
+//   const cameraDirection = new THREE.Vector3();
+//   camera.getWorldDirection(cameraDirection);
+
+//   // Calculate the angle in the XZ plane
+//   const angle = Math.atan2(cameraDirection.x, cameraDirection.z); // Yaw angle in radians
+//   let degrees = THREE.MathUtils.radToDeg(angle); // Convert to degrees
+
+//   if (degrees < 0) {
+//     degrees = 360 + degrees; // Normalize to 0-360 range
+//   }
+
+//   return degrees;
+// }
 
 // Update compass needle based on camera's world direction
-function updateCompass() {
-  const compassAngle = getCameraCompassAngle(); // Get compass angle
+// function updateCompass() {
+//   const compassAngle = getCameraCompassAngle(); // Get compass angle
 
-  compassNeedle.style.transform = `rotate(${-compassAngle}deg)`; // Rotate needle (invert direction)
+//   compassNeedle.style.transform = `rotate(${-compassAngle}deg)`; // Rotate needle (invert direction)
+// }
+
+// Event listener for mouse clicks
+document.addEventListener('click', onDocumentMouseClick, false);
+
+function onDocumentMouseClick(event) {
+  // Calculate mouse position in normalized device coordinates (-1 to +1)
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  // Update the raycaster with the camera and mouse position
+  raycaster.setFromCamera(mouse, camera);
+
+  // Check for intersections with the arrows
+  const intersects = raycaster.intersectObjects(arrows.map(a => a.line));  // Use the line geometry for detection
+
+  if (intersects.length > 0) {
+      const intersectedArrow = intersects[0].object;
+
+      // Rotate the camera based on the clicked arrow's direction
+      if (intersectedArrow === eastArrow.line) {
+          rotateCameraToDirection(2);  // East
+      } else if (intersectedArrow === northArrow.line) {
+          rotateCameraToDirection(0);  // North
+      } else if (intersectedArrow === southArrow.line) {
+          rotateCameraToDirection(3);  // South
+      } else if (intersectedArrow === westArrow.line) {
+          rotateCameraToDirection(-2);  // West
+      }
+  }
 }
 
-function isLabelVisible() {
-  var frustum = new THREE.Frustum();
-  var cameraViewProjectionMatrix = new THREE.Matrix4();
-
-  camera.updateMatrixWorld(); // Ensure the camera's world matrix is up-to-date
-  camera.matrixWorldInverse.copy(camera.matrixWorld).invert(); // Invert the camera's world matrix
-  cameraViewProjectionMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
-  
-  frustum.setFromProjectionMatrix(cameraViewProjectionMatrix);
-
-  // Return true if the label is inside the camera's frustum (should be visible)
-  return frustum.containsPoint(label.position);
-}
-
-function updateLabelPosition() {
-  var vector = new THREE.Vector3(); // Create a new vector for label position
-  var canvas = renderer.domElement; // The canvas you're rendering on
-
-  // Get the object's world position
-  label.getWorldPosition(vector);
-
-  // Project the object's position into screen space
-  vector.project(camera);
-
-  // Calculate the label's screen position
-  var x = (vector.x * 0.5 + 0.5) * canvas.width;
-  var y = -(vector.y * 0.5 - 0.5) * canvas.height;
-
-  // Update the label's CSS position to match the 3D position
-  labelDiv.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`;
-  labelDiv.style.display = "block"; // Ensure the label is always visible
+// Function to rotate the camera smoothly to the target direction
+function rotateCameraToDirection(direction) {
+  resetTargetAngle = direction; // Set the target angle to 0 (North)
+  isResetting = true;   // Start the reset process
 }
 
 function animate() {
@@ -400,57 +683,73 @@ function animate() {
   vec.sub(camera.position).normalize();
 
   var distance = -camera.position.z / vec.z;
-  cameraDistance = distance;
 
   pos.copy(camera.position).add(vec.multiplyScalar(distance));
-  // label.position.set(pos.x, pos.y, pos.z);
 
   // Update the compass needle based on camera rotation
-  updateCompass();
+  // updateCompass();
 
-  // Check if the label is visible
-  // label.visible = isLabelVisible();
-  // updateLabelPosition();
+  setData();
+
+  model.castShadow = true;
+  model.receiveShadow = true;
 
   renderer.render(scene, camera);
+  controls.update(); 
   composer.render();
   labelRenderer.render(scene, camera);
 }
 
 renderer.setAnimationLoop(animate);
-window.onresize = function () {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
 
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    labelRenderer.setSize(window.innerWidth, window.innerHeight);
-    composer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    composer.setSize(window.innerWidth, window.innerHeight);
+window.onresize = function () {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  labelRenderer.setSize(window.innerWidth, window.innerHeight);
+  composer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  composer.setSize(window.innerWidth, window.innerHeight);
 };
+
+
+
 
 function setData() {
     model.traverse((item) => {
         if (item.isMesh) {
+
+          if (item.material) {
+            const material = item.material;
+    
+
+
+            item.material.envMap = scene.environment;  // Apply environment map
+            // item.material.envMapIntensity = 1;          // Control reflection intensity
+            item.material.needsUpdate = true;           // Ensure the material updates
+
+            // material.envMap = exrCubeRenderTarget;
+          }
             if (item.name.includes("apart")) {
-                //console.log(item.name);
+                // console.log(item.name);
                 for (let i = 0; i < data.length; i++) {
                     if (item.name.replace('apartment_', '') == data[i].apartment_id) {
                         let baseMaterial;
                         if (data[i].availability == "available") {
-                            baseMaterial = new THREE.MeshStandardMaterial({
-                                color: new THREE.Color("rgb(15, 175, 198)"),
+                            baseMaterial = new THREE.MeshPhysicalMaterial({
+                                color: new THREE.Color("rgb(90, 130, 255)"),
                                 metalness: 0,
-                                roughness: 0.2,
+                                roughness: 1,
                                 transparent: true,
-                                opacity: 0.15
+                                opacity: 0.1
                             });
                         } else {
-                            baseMaterial = new THREE.MeshStandardMaterial({
-                                color: new THREE.Color("rgb(255, 36, 154)"),
+                            baseMaterial = new THREE.MeshPhysicalMaterial({
+                                color: new THREE.Color("rgb(255, 90, 130)"),
                                 metalness: 0,
-                                roughness: 0.2,
+                                roughness: 1,
                                 transparent: true,
-                                opacity: 0.15
+                                opacity: 0.1
                             });
                         }
 
@@ -473,7 +772,7 @@ function setData() {
 
 
 // Lighting
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+const ambientLight = new THREE.AmbientLight(0xffffff, 2);
 scene.add(ambientLight);
 
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -483,6 +782,14 @@ scene.add(directionalLight);
 const pointLight = new THREE.PointLight(0xffffff, 0.8);
 pointLight.position.set(5, 5, 5);
 scene.add(pointLight);
+
+// SHADOWS
+const light = new THREE.RectAreaLight(0xffffff, 5, 10, 10);
+light.position.set(5, 5, 5);
+light.lookAt(0, 0, 0);
+scene.add(light);
+
+
 
 let labelSet = false;
 
@@ -499,7 +806,7 @@ function onMouseMove(event) {
       if (item.name.includes("apart")) {
         if (item.userData.isSelected != true) {
           item.material.transparent = true;
-          item.material.opacity = 0.15;
+          item.material.opacity = 0.3;
         }
       }
     }
@@ -507,9 +814,11 @@ function onMouseMove(event) {
 
   const intersections = checkRayIntersections(mousePointer, camera, raycaster, scene, getFirstValue, false);
   let active = false;
+  removeOutlines(outlinePassHover);
   if (intersections) {
     for (let i = 0; i < data.length; i++) {
       if (intersections.object.name.replace('apartment_', '') === data[i].apartment_id.toString()) {
+        addOutlinesBasedOnIntersections_hover(intersections.object, outlinePassHover);
         ////console.log(data[i])
         pApartment.textContent = "דירה " + data[i].apartment_id;
         pBeds_data.textContent = "חדרים: " + data[i].rooms;
@@ -546,6 +855,42 @@ function onMouseMove(event) {
 var targetAngle;
 var smoothReset = false;
 
+window.loadBuilding = function (files){
+
+  console.log("Building = "+files.glb);
+  console.log("Data = "+files.csv);
+
+  loader.load(files.glb, function (gltf) {
+
+    model = gltf.scene;
+    model.position.set(0, 0, 0);
+    model.scale.set(0.1, 0.1, 0.1);
+    scene.add(model);
+  
+  
+    Papa.parse(files.csv, {
+      delimiter: "",
+      newline: "",
+      download: true,
+      header: true,
+      complete: function (results) {
+        //console.log(results);
+        data = results.data;
+        setData();
+      }
+  
+    })
+  
+  
+  }, undefined, function (e) {
+  
+    console.error(e);
+  
+  });
+
+
+}
+
 window.closeApartment = function(){
 
   if (loading)
@@ -573,7 +918,7 @@ window.selectApartment = function (num) {
           isSelected = true;
           item.userData.isSelected = true;
           item.material.transparent = true;
-          item.material.opacity = 0.38;
+          item.material.opacity = 0.9;
 
           addOutlinesBasedOnIntersections2(item, outlinePass);
           pApartment.textContent = "דירה " + data[i].apartment_id;
@@ -727,30 +1072,27 @@ let maxA = controls.maxAzimuthAngle
 let resetTargetAngle = 0; // Target yaw angle to reset the camera to (North)
 let isResetting = false;  // Flag to indicate if resetting is in progress
 
-// Event listener to start the smooth reset when the compass is clicked
-document.getElementById("compass-container").addEventListener("click", function () {
-    resetTargetAngle = 0; // Set the target angle to 0 (North)
-    isResetting = true;   // Start the reset process
-});
-
-// Dynamically add a URL to the visit button
-visitButton.addEventListener('click', function() {
-  window.open(visitUrl, '_blank'); // Use dynamic variable
-});
-
-
-// // Dynamically add a URL to the floor tour button
-// floorDataButton.addEventListener('click', function() {
-//   window.location.href = tourUrl; // Use dynamic variable
+// // Event listener to start the smooth reset when the compass is clicked
+// document.getElementById("compass-container").addEventListener("click", function () {
+//     resetTargetAngle = 0; // Set the target angle to 0 (North)
+//     isResetting = true;   // Start the reset process
 // });
 
-// Add the event listener to open the modal when the button is clicked
-floorDataButton.addEventListener('click', function() {
-  // Set the iframe source dynamically (replace with your actual URL)
+
+visitButton.addEventListener('click', function() {
   const iframe = document.getElementById('iframePopup');
-  iframe.src = tourUrl; // Set the URL you want in the iframe
+  iframe.src = visitUrl;
   
-  // Trigger the Bootstrap modal
+
+  const modal = new bootstrap.Modal(document.getElementById('iframeModal'));
+  modal.show();
+});
+
+
+floorDataButton.addEventListener('click', function() {
+  const iframe = document.getElementById('iframePopup');
+  iframe.src = tourUrl;
+  
   const modal = new bootstrap.Modal(document.getElementById('iframeModal'));
   modal.show();
 });
@@ -780,23 +1122,23 @@ function smoothResetCamera() {
 }
 
 function doSmoothReset() {
-// Function for linear interpolation
+
 function lerp(start, end, t) {
   return start + t * (end - start);
 }
 
-// Get current azimuthal angle
+
 var alpha = controls.getAzimuthalAngle();
 
-// Smooth change using manual lerp
+
 controls.minAzimuthAngle = lerp(alpha, targetAngle, 0.1);
 controls.maxAzimuthAngle = controls.minAzimuthAngle;
 controls.update();
 
-// Check if current angle is close enough to the target angle
-const tolerance = 0.01; // Define a tolerance for floating-point comparison
+
+const tolerance = 0.01;
 if (Math.abs(alpha - targetAngle) < tolerance) {
-  alpha = targetAngle; // Snap to target angle
+  alpha = targetAngle;
   smoothReset = false;
 
   controls.minAzimuthAngle = Infinity;
@@ -804,7 +1146,6 @@ if (Math.abs(alpha - targetAngle) < tolerance) {
   controls.update();
 }
 
-// Check if we need to exit smooth reset
 if (Math.abs(alpha - 0.5) < tolerance) {
   onStart();
 }
